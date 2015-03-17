@@ -1,0 +1,109 @@
+---
+# Copyright (c) 2014 Lekane Oy. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#    * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#    * Neither the name of Lekane Oy nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Create/configure Cassandra cluster & OpsCenter
+# ==============================================
+#
+# To create node for new empty cluster: 
+# ansible-playbook -i <inventory> --extra-vars="init_server=true empty_cluster=true" cassandra.yml 
+#
+# To create node for existing cluster: 
+# ansible-playbook -i <inventory> --extra-vars="init_server=true" cassandra.yml 
+#
+# To replace node in existing cluster: 
+# ansible-playbook -i <inventory> --extra-vars="init_server=true replace_dead_server=true" cassandra.yml 
+#
+# To update node in existing cluster: 
+# ansible-playbook -i <inventory> cassandra.yml 
+#
+# To run post-install: 
+# ansible-playbook -i <inventory> -t post_install cassandra.yml 
+#
+# To target specific node/nodes, add -l node1[,node2]
+
+- name: Cassandra server init
+  hosts: cassandra_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: cassandra_init, when: "{{ init_server | default(false) }} == true" }
+  
+- name: Cassandra base installation
+  hosts:
+    - cassandra_nodes
+    - opscenter_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: cassandra_common }
+
+- name: Cassandra installation
+  hosts:
+    - cassandra_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: cassandra }
+
+- name: OpcCenter installation
+  hosts: opscenter_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: opscenter }
+
+- name: Cassandra config
+  serial: 1
+  hosts:
+    - cassandra_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: cassandra_config, tags: ['config'] }
+
+- name: OpsCenter agent installation
+  hosts: cassandra_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: opscenter_agent, tags: ['opscenter_agent'] }
+  
+- name: Cassandra post install
+  hosts: cassandra_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: cassandra_post_install, tags: ['post_install'] }
+  
+- name: Cassandra cron install
+  hosts: cassandra_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: cassandra_cron, tags: ['cron'] }
