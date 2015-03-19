@@ -29,3 +29,8 @@
 
 - name: Create RAID-0 from ephemeral drives
   script: raid_ephemeral.sh
+  when: deployment_environment == "aws"
+
+- name: Symlink /ephemeral to /data
+  file: src=/ephemeral dest=/data state=link
+  when: deployment_environment == "euca"

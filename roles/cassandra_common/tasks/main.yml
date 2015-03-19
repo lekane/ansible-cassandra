@@ -27,17 +27,46 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- name: Set private IP var
-  set_fact: private_ip="{{ ansible_default_ipv4.address  }}"
+- name: Get EC2 Facts
+  action: ec2_facts
 
-- name: Set private hostname var
+- name: Set private IP var (EUCA)
+  set_fact: private_ip="{{ ansible_ec2_local_ipv4 }}"
+  when: deployment_environment == "euca"
+
+- name: Set private hostname var (EUCA)
+  set_fact: private_hostname="{{ ansible_ec2_local_hostname }}"
+  when: deployment_environment == "euca"
+
+- name: Set private IP var (AWS)
+  set_fact: private_ip="{{ ansible_default_ipv4.address  }}"
+  when: deployment_environment == "aws"
+
+- name: Set private hostname var (AWS)
   set_fact: private_hostname="{{ ansible_hostname }}"
+  when: deployment_environment == "aws"
 
 - name: Add Datastax repository
   shell: echo "deb http://debian.datastax.com/community stable main" > /etc/apt/sources.list.d/cassandra.sources.list
   
 - name: Add Datastax repository key
   shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
+  environment: proxy_env
 
-- name: Update apt cache
-  apt: update_cache=yes
+- name: Install python-software-properties package
+  apt: pkg=python-software-properties state=present
+  environment: proxy_env
+
+- name: Add Oracle Java PPA repo
+  apt_repository: repo='ppa:webupd8team/java'
+  environment: proxy_env
+
+- name: Accept Oracle license (1/2)
+  shell: "echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections"
+
+- name: Accept Oracle license (2/2)
+  shell: "echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections"
+
+- name: Install Oracle Java
+  apt: name=oracle-java7-installer state=latest update_cache=true
+  environment: proxy_env

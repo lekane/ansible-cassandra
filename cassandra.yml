@@ -54,7 +54,7 @@
   roles:
   - { role: cassandra_init, when: "{{ init_server | default(false) }} == true" }
   
-- name: Cassandra base installation
+- name: Cassandra base requirements installation
   hosts:
     - cassandra_nodes
     - opscenter_nodes

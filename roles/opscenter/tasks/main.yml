@@ -29,6 +29,7 @@
 
 - name: Install OpsCenter
   apt: pkg=opscenter state=latest
+  environment: proxy_env
 
 - name: Template opscenterd.conf
   template: src=opscenterd.j2 dest=/etc/opscenter/opscenterd.conf mode=0644

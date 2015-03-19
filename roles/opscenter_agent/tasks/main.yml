@@ -29,6 +29,7 @@
 
 - name: Install Opscenter agent
   apt: pkg=datastax-agent state=latest
+  environment: proxy_env
 
 - name: Configure Opscenter stomp
   shell: "echo stomp_interface: {{ opscenter_ip }} > /var/lib/datastax-agent/conf/address.yaml"
