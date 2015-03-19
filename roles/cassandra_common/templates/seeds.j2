@@ -1,0 +1,7 @@
+{% set seeds = []  %}
+{%- for node in groups['cassandra_nodes']  -%}
+{%- if hostvars[node].seed == "true" -%}
+{% do seeds.append( hostvars[node].ansible_eth0.ipv4.address ) %}
+{% endif %}
+{% endfor %}
+{{ seeds | join(',') }}

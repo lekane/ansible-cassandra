@@ -46,6 +46,18 @@
   set_fact: private_hostname="{{ ansible_hostname }}"
   when: deployment_environment == "aws"
 
+- name: Template seed list
+  template: src=seeds.j2 dest=/tmp/seed_list mode=0664
+
+- name: Load seed list
+  shell: cat /tmp/seed_list
+  register: seed_list
+
+- name: Set seeds fact
+  set_fact: seeds={{ seed_list.stdout }}
+
+- debug: var=seeds
+
 - name: Add Datastax repository
   shell: echo "deb http://debian.datastax.com/community stable main" > /etc/apt/sources.list.d/cassandra.sources.list
   
