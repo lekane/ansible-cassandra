@@ -71,13 +71,6 @@
   roles:
   - { role: cassandra }
 
-- name: OpcCenter installation
-  hosts: opscenter_nodes
-  user: install_user
-  sudo: yes
-  roles:
-  - { role: opscenter }
-
 - name: Cassandra config
   serial: 1
   hosts:
@@ -86,6 +79,13 @@
   sudo: yes
   roles:
   - { role: cassandra_config, tags: ['config'] }
+
+- name: OpcCenter installation
+  hosts: opscenter_nodes
+  user: install_user
+  sudo: yes
+  roles:
+  - { role: opscenter }
 
 - name: OpsCenter agent installation
   hosts: cassandra_nodes

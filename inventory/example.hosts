@@ -42,4 +42,3 @@ opscenter_nodes
 ansible_ssh_private_key_file=<SSH_PEM>
 ansible_ssh_user=ubuntu
 install_user=ubuntu
-opscenter_ip=<OPSCENTER_IP>
