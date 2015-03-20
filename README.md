@@ -2,14 +2,16 @@
 Ansible provisioning/maintenance tasks for Cassandra
 
 Usage:
+
 1. Create the servers for Cassandra and Datastax OpsCenter
 2. Define an Ansible inventory (see inventory/example.hosts) for your environment
 3. Run the playbook to install Cassandra + Datastax OpsCenter
 
 Inventory configuration:
+
 1. cassandra_nodes
-   1. seed=[true, false] (is the node a seed)
-   2. repair_weekday=[MON,TUE,WED,THU,FRI,SAT,SUN] (which day(s) to run repair)
+   * seed=[true, false] (is the node a seed)
+   * repair_weekday=[MON,TUE,WED,THU,FRI,SAT,SUN] (which day(s) to run repair)
 
 Requirements:
 - Ansible 1.8 or later
