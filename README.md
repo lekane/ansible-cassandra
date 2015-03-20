@@ -9,9 +9,10 @@ Usage:
 
 Inventory configuration:
 
-1. cassandra_nodes
-   * seed=[true, false] (is the node a seed)
-   * repair_weekday=[MON,TUE,WED,THU,FRI,SAT,SUN] (which day(s) to run repair)
+Inventory group | Variable | Options | Description
+--- | --- | --- | ---
+cassandra_nodes | seed | true, false | is the node a seed
+cassandra_nodes | repair_weekday | MON,TUE,WED,THU,FRI,SAT,SUN | day(s) to run repair on node
 
 Requirements:
 - Ansible 1.8 or later
