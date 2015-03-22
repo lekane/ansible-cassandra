@@ -63,15 +63,12 @@
   
 - name: Add Datastax repository key
   shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
-  environment: proxy_env
 
 - name: Install python-software-properties package
   apt: pkg=python-software-properties state=present
-  environment: proxy_env
 
 - name: Add Oracle Java PPA repo
   apt_repository: repo='ppa:webupd8team/java'
-  environment: proxy_env
 
 - name: Accept Oracle license (1/2)
   shell: "echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections"
@@ -81,4 +78,3 @@
 
 - name: Install Oracle Java
   apt: name=oracle-java7-installer state=latest update_cache=true
-  environment: proxy_env

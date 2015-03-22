@@ -17,7 +17,7 @@
 # Cassandra Node IP=Data Center:Rack
 
 {% for node in groups['cassandra_nodes']  %}
-{{ node.node_ip }}={{ node.dc }}:{{ node.rack }}
+{{ hostvars[node].node_ip }}={{ hostvars[node].dc }}:{{ hostvars[node].rack }}
 {% endfor %}
 
 # default for unknown nodes

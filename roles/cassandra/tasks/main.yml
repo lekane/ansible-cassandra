@@ -29,11 +29,9 @@
 
 - name: Install Datastax Community Cassandra
   apt: name=dsc21 state=latest
-  environment: proxy_env
 
 - name: Install Cassandra tools
   apt: pkg=cassandra-tools state=latest
-  environment: proxy_env
 
 - name: Pause
   pause: seconds=10

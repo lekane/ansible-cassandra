@@ -28,3 +28,8 @@
 
 cluster_name: cassandra_cluster_1
 num_tokens: 256
+
+proxy_env:
+  http_proxy: ''
+  https_proxy: ''
+  no_proxy: 'localhost,127.0.0.1'
