@@ -33,11 +33,20 @@
 - name: Backup original cassandra-env.sh
   command: cp /etc/cassandra/cassandra-env.sh /etc/cassandra/cassandra-env.sh.orig creates=/etc/cassandra/cassandra-env.sh.orig
 
+- name: Backup original cassandra-rackdc.properties
+  command: cp /etc/cassandra/cassandra-rackdc.properties /etc/cassandra/cassandra-rackdc.properties.orig creates=/etc/cassandra/cassandra-rackdc.properties.orig
+
+- name: Backup original cassandra-topology.properties
+  command: cp /etc/cassandra/cassandra-topology.properties /etc/cassandra/cassandra-topology.properties.orig creates=/etc/cassandra/cassandra-topology.properties.orig
+
 - name: Template cassandra.yml
   template: src=cassandra.j2 dest=/etc/cassandra/cassandra.yaml mode=0664
 
 - name: Template cassandra-env.sh
   template: src=cassandra-env.j2 dest=/etc/cassandra/cassandra-env.sh mode=0664
+
+- name: Template cassandra-rackdc.properties
+  template: src=cassandra-rackdc.j2 dest=/etc/cassandra/cassandra-rackdc.properties mode=0664
 
 - name: Template cassandra-topology.properties
   template: src=cassandra-topology.j2 dest=/etc/cassandra/cassandra-topology.properties mode=0664
