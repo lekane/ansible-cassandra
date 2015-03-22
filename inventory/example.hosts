@@ -27,9 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [cassandra_nodes]
-<CASSANDRA_NODE1> node_ip=<CASSANDRA_NODE1_IP> repair_weekday=MON,THU,SUN seed=true
-<CASSANDRA_NODE2> node_ip=<CASSANDRA_NODE2_IP> repair_weekday=TUE,FRI seed=true
-<CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> repair_weekday=WED,SAT seed=true
+<CASSANDRA_NODE1> node_ip=<CASSANDRA_NODE1_IP> repair_weekday=MON,THU,SUN seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE2> node_ip=<CASSANDRA_NODE2_IP> repair_weekday=TUE,FRI seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> repair_weekday=WED,SAT seed=true dc=DC1 rack=RAC1
 
 [opscenter_nodes]
 <OPSCENTER_NODE>
@@ -42,3 +42,4 @@ opscenter_nodes
 ansible_ssh_private_key_file=<SSH_PEM>
 ansible_ssh_user=ubuntu
 install_user=ubuntu
+deployment_environment=aws

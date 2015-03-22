@@ -11,8 +11,13 @@ Inventory configuration:
 
 Inventory group | Variable | Options | Description
 --- | --- | --- | ---
-cassandra_nodes | seed | true, false | is the node a seed
+cassandra_nodes | dc | DC1, DC2, ... | data center of node
+cassandra_nodes | deployment_environment | aws, euca | environment for installation
+cassandra_nodes | rack | RAC1, RAC2, ... | rack of node
 cassandra_nodes | repair_weekday | MON,TUE,WED,THU,FRI,SAT,SUN | day(s) to run repair on node
+cassandra_nodes | seed | true, false | is the node a seed
+--- | --- | --- | ---
+opscenter_nodes | deployment_environment | aws, euca | environment for installation
 
 Requirements:
 - Ansible 1.8 or later

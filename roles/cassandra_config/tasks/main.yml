@@ -39,6 +39,9 @@
 - name: Template cassandra-env.sh
   template: src=cassandra-env.j2 dest=/etc/cassandra/cassandra-env.sh mode=0664
 
+- name: Template cassandra-topology.properties
+  template: src=cassandra-topology.j2 dest=/etc/cassandra/cassandra-topology.properties mode=0664
+
 - name: Enable performance tweaks
   script: performance_tweaks.sh
 
