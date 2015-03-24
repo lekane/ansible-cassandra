@@ -31,9 +31,8 @@
 HOSTNAME=$(hostname)
 export TOKENS=$(nodetool info -T | grep ^Token | awk '{ print $3 }' | tr \\n , | sed -e 's/,$/\n/')
 
-cp /etc/cassandra/cassandra.yaml /etc/cassandra/cassandra.yaml.bak
+cp /etc/cassandra/cassandra.yaml /etc/cassandra/cassandra.yaml.pre_token_bak
 
-sed -i -e '/num_tokens:/s/num_tokens:/#num_tokens:/' /etc/cassandra/cassandra.yaml
 sed -i -e '/initial_token:/s/.*/initial_token: '$TOKENS/ /etc/cassandra/cassandra.yaml
 
 echo $TOKENS >> /etc/cassandra/TOKENS
