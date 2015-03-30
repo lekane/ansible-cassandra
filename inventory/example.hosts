@@ -32,7 +32,7 @@
 <CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> repair_weekday=WED,SAT seed=true dc=DC1 rack=RAC1
 
 [opscenter_nodes]
-<OPSCENTER_NODE>
+<OPSCENTER_NODE> node_ip=<OPSCENTER_NODE_IP>
 
 [all_cassandra_nodes:children]
 cassandra_nodes

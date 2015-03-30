@@ -31,7 +31,7 @@
   set_fact: opscenter_node={{ groups[['opscenter_nodes'][0]][0] }}
 
 - name:  Set opscenter ip fact
-  set_fact: opscenter_ip="{{ hostvars[opscenter_node].ansible_eth0.ipv4.address }}"
+  set_fact: opscenter_ip="{{ hostvars[opscenter_node].node_ip }}"
 
 - name: Install Opscenter agent
   apt: pkg=datastax-agent state=latest
