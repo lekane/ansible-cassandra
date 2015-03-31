@@ -27,12 +27,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [cassandra_nodes]
-<CASSANDRA_NODE1> node_ip=<CASSANDRA_NODE1_IP> repair_weekday=MON,THU,SUN seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE2> node_ip=<CASSANDRA_NODE2_IP> repair_weekday=TUE,FRI seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> repair_weekday=WED,SAT seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE1> repair_weekday=MON,THU,SUN seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE2> repair_weekday=TUE,FRI seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE3> repair_weekday=WED,SAT seed=true dc=DC1 rack=RAC1
 
 [opscenter_nodes]
-<OPSCENTER_NODE> node_ip=<OPSCENTER_NODE_IP>
+<OPSCENTER_NODE>
 
 [all_cassandra_nodes:children]
 cassandra_nodes

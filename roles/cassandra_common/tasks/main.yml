@@ -31,7 +31,7 @@
   action: ec2_facts
 
 - name: Set private IP var (EUCA)
-  set_fact: private_ip="{{ ansible_ec2_local_ipv4 }}"
+  set_fact: node_ip="{{ ansible_ec2_local_ipv4 }}"
   when: deployment_environment == "euca"
 
 - name: Set private hostname var (EUCA)
@@ -39,7 +39,7 @@
   when: deployment_environment == "euca"
 
 - name: Set private IP var (AWS)
-  set_fact: private_ip="{{ ansible_default_ipv4.address  }}"
+  set_fact: node_ip="{{ ansible_default_ipv4.address  }}"
   when: deployment_environment == "aws"
 
 - name: Set private hostname var (AWS)
