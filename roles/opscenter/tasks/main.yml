@@ -27,17 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- name: Install OpsCenter
-  apt: pkg=opscenter state=latest
-
-- name: Template opscenterd.conf
-  template: src=opscenterd.j2 dest=/etc/opscenter/opscenterd.conf mode=0644
-
-- name: Create /etc/opscenter/clusters
-  file: path=/etc/opscenter/clusters state=directory
-
-- name: Template cluster config
-  template: "src=cluster.j2 dest=/etc/opscenter/clusters/{{ cluster_name }}.conf mode=0644"
-
-- name: Start OpsCenter service
-  service: name=opscenterd state=restarted
+- include: opscenter_agent.yml
+  when: "'cassandra_nodes' in group_names"
+- include: opscenter_server.yml
+  when: "'opscenter_nodes' in group_names"

@@ -16,8 +16,10 @@ cassandra_nodes | deployment_environment | aws, euca | environment for installat
 cassandra_nodes | rack | RAC1, RAC2, ... | rack of node
 cassandra_nodes | repair_weekday | MON,TUE,WED,THU,FRI,SAT,SUN | day(s) to run repair on node
 cassandra_nodes | seed | true, false | is the node a seed
+cassandra_nodes | node_ip | true, false | IP for internal cluster communications
 --- | --- | --- | ---
 opscenter_nodes | deployment_environment | aws, euca | environment for installation
+opscenter_nodes | node_ip | true, false | IP for internal cluster communications
 
 Requirements:
 - Ansible 1.8 or later
