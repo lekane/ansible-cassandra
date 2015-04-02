@@ -35,11 +35,15 @@
   file: src=/ephemeral dest=/data state=link
   when: "{{ init_server | default(false) }} == true and deployment_environment == 'euca'"
 
-- name: Install Datastax Community Cassandra
-  apt: name=dsc21 state=latest
+#- name: Install Datastax Community Cassandra & tools
+#  shell: "apt-get -y install dsc21={{ dsc_version }} cassandra={{ cassandra_version }} cassandra-tools={{ cassandra_tools_version }}"
 
-- name: Install Cassandra tools
-  apt: pkg=cassandra-tools state=latest
+- name: Install Datastax Community Cassandra & tools
+  apt: pkg={{item}} state=present
+  with_items:
+  - dsc21={{ dsc_version }}
+  - cassandra={{ cassandra_version }}
+  - cassandra-tools={{ cassandra_tools_version }}
 
 - name: Pause
   pause: seconds=10
