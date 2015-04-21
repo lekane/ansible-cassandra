@@ -30,8 +30,11 @@
 - name: Get EC2 Facts
   action: ec2_facts
 
+- name: Set default private IP to node_ip
+  set_fact: private_ip="{{ node_ip }}"
+
 - name: Set private IP var (EUCA)
-  set_fact: node_ip="{{ ansible_ec2_local_ipv4 }}"
+  set_fact: private_ip="{{ ansible_ec2_local_ipv4 }}"
   when: deployment_environment == "euca"
 
 - name: Set private hostname var (EUCA)
@@ -39,12 +42,15 @@
   when: deployment_environment == "euca"
 
 - name: Set private IP var (AWS)
-  set_fact: node_ip="{{ ansible_default_ipv4.address  }}"
+  set_fact: private_ip="{{ ansible_default_ipv4.address  }}"
   when: deployment_environment == "aws"
 
 - name: Set private hostname var (AWS)
   set_fact: private_hostname="{{ ansible_hostname }}"
   when: deployment_environment == "aws"
+
+- debug: var=private_ip
+- debug: var=private_hostname
 
 - name: Template seed list
   template: src=seeds.j2 dest=/tmp/seed_list mode=0664
