@@ -73,6 +73,9 @@
 - name: Install python-software-properties package
   apt: pkg=python-software-properties state=present
 
+- name: Install python-setuptools package
+  apt: pkg=python-setuptool state=present
+
 - name: Add Oracle Java PPA repo
   apt_repository: repo='ppa:webupd8team/java'
 

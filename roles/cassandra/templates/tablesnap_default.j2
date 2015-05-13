@@ -1,0 +1,2 @@
+DAEMON_OPTS="-k {{ s3_backup_access_key }} -s {{ s3_backup_secret_key }} -r -a -B -n {{ inventory_hostname }} {{ s3_backup_bucket }} /data/cassandra/data/{{ s3_backup_keyspace }}/"
+RUN=yes

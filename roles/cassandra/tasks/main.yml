@@ -137,3 +137,5 @@
   fetch: src=/etc/cassandra/TOKENS dest=inventory/tokens/{{ ansible_hostname }}.token flat=yes
   when: "{{ init_server | default(false) }} == true"
 
+- include: s3_backup.yml
+  when: "{{ s3_backup_enabled | default(false) }} == true"
