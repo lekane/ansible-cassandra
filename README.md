@@ -32,3 +32,4 @@ Requirements:
 - Ansible 1.8 or later
 - Ansible general configuration: "jinja2_extensions = jinja2.ext.do"
 - Nodes running Ubuntu 14.04 or later
+- Node have the following installed: git
