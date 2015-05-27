@@ -27,7 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-- include: opscenter_agent.yml
-  when: "'cassandra_nodes' in group_names"
 - include: opscenter_server.yml
   when: "'opscenter_nodes' in group_names"
+- include: opscenter_agent.yml
+  when: "'cassandra_nodes' in group_names"

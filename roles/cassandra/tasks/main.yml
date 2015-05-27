@@ -27,6 +27,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+- name: Set cassandra_config_dir fact (DCE)
+  when: install_version == "dce"
+  set_fact: cassandra_config_dir=/etc/cassandra
+
+- name: Set cassandra_config_dir fact (DSE)
+  when: install_version == "dse"
+  set_fact: cassandra_config_dir=/etc/dse/cassandra
+
 - name: Create RAID-0 from ephemeral drives
   script: raid_ephemeral.sh
   when: "{{ init_server | default(false) }} == true and deployment_environment == 'aws'"
@@ -35,21 +43,38 @@
   file: src=/ephemeral dest=/data state=link
   when: "{{ init_server | default(false) }} == true and deployment_environment == 'euca'"
 
-#- name: Install Datastax Community Cassandra & tools
-#  shell: "apt-get -y install dsc21={{ dsc_version }} cassandra={{ cassandra_version }} cassandra-tools={{ cassandra_tools_version }}"
-
 - name: Install Datastax Community Cassandra & tools
+  when: install_version == "dce"
   apt: pkg={{item}} state=present
   with_items:
   - dsc21={{ dsc_version }}
   - cassandra={{ cassandra_version }}
   - cassandra-tools={{ cassandra_tools_version }}
 
+- name: Install Datastax Enterprise Cassandra
+  when: install_version == "dse"
+  apt: pkg={{item}} state=present
+  with_items:
+  - dse-full={{ dse_version }}
+
 - name: Pause
   pause: seconds=10
 
-- name: Stop Cassandra (autostarted on install)
+- name: Stop Cassandra DCE (autostarted on install)
+  when: "{{ init_server | default(false) }} == true and install_version == 'dce'"
   service: name=cassandra state=stopped
+
+- name: Stop Cassandra DSE (autostarted on install)
+  when: "{{ init_server | default(false) }} == true and install_version == 'dse'"
+  service: name=dse state=stopped
+
+- name: Stop Cassandra DCE
+  when: "{{ init_server | default(false) }} == false and install_version == 'dce'"
+  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
+
+- name: Stop Cassandra DSE
+  when: "{{ init_server | default(false) }} == false and install_version == 'dse'"
+  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service dse stop"
 
 - name: Remove cluster metadata
   shell: rm -rf /var/lib/cassandra/*
@@ -65,53 +90,61 @@
   file: path=/data/cassandra/saved_caches state=directory owner=cassandra group=cassandra mode=0755
 
 - name: Backup original cassandra.yaml
-  command: cp /etc/cassandra/cassandra.yaml /etc/cassandra/cassandra.yaml.orig creates=/etc/cassandra/cassandra.yaml.orig
+  command: "cp {{ cassandra_config_dir }}/cassandra.yaml {{ cassandra_config_dir }}/cassandra.yaml.orig creates={{ cassandra_config_dir }}/cassandra.yaml.orig"
 
 - name: Backup original cassandra-env.sh
-  command: cp /etc/cassandra/cassandra-env.sh /etc/cassandra/cassandra-env.sh.orig creates=/etc/cassandra/cassandra-env.sh.orig
+  command: "cp {{ cassandra_config_dir }}/cassandra-env.sh {{ cassandra_config_dir }}/cassandra-env.sh.orig creates={{ cassandra_config_dir }}/cassandra-env.sh.orig"
 
 - name: Backup original cassandra-rackdc.properties
-  command: cp /etc/cassandra/cassandra-rackdc.properties /etc/cassandra/cassandra-rackdc.properties.orig creates=/etc/cassandra/cassandra-rackdc.properties.orig
+  command: "cp {{ cassandra_config_dir }}/cassandra-rackdc.properties {{ cassandra_config_dir }}/cassandra-rackdc.properties.orig creates={{ cassandra_config_dir }}/cassandra-rackdc.properties.orig"
 
 - name: Backup original cassandra-topology.properties
-  command: cp /etc/cassandra/cassandra-topology.properties /etc/cassandra/cassandra-topology.properties.orig creates=/etc/cassandra/cassandra-topology.properties.orig
+  command: "cp {{ cassandra_config_dir }}/cassandra-topology.properties {{ cassandra_config_dir }}/cassandra-topology.properties.orig creates={{ cassandra_config_dir }}/cassandra-topology.properties.orig"
 
 - name: Template cassandra.yml
-  template: src=cassandra.j2 dest=/etc/cassandra/cassandra.yaml mode=0664
+  template: "src=cassandra.j2 dest={{ cassandra_config_dir }}/cassandra.yaml mode=0664"
 
 - name: Template cassandra-env.sh
-  template: src=cassandra-env.j2 dest=/etc/cassandra/cassandra-env.sh mode=0664
+  template: "src=cassandra-env.j2 dest={{ cassandra_config_dir }}/cassandra-env.sh mode=0664"
 
 - name: Template cassandra-rackdc.properties
-  template: src=cassandra-rackdc.j2 dest=/etc/cassandra/cassandra-rackdc.properties mode=0664
+  template: "src=cassandra-rackdc.j2 dest={{ cassandra_config_dir }}/cassandra-rackdc.properties mode=0664"
 
 - name: Template cassandra-topology.properties
-  template: src=cassandra-topology.j2 dest=/etc/cassandra/cassandra-topology.properties mode=0664
+  template: "src=cassandra-topology.j2 dest={{ cassandra_config_dir }}/cassandra-topology.properties mode=0664"
 
 - name: Enable performance tweaks
   script: performance_tweaks.sh
 
 - name: Enable config to replace existing dead node
   when: "{{ replace_dead_server | default(false) }} == true"
-  command: sed -i -e '/cassandra.replace_address/s/#JVM_OPTS/JVM_OPTS/' /etc/cassandra/cassandra-env.sh
+  command: "sed -i -e '/cassandra.replace_address/s/#JVM_OPTS/JVM_OPTS/' {{ cassandra_config_dir }}/cassandra-env.sh"
 
 - name: Disable auto_bootstrap for empty cluster
   when: "{{ empty_cluster | default(false) }} == true"
-  command: sed -i -e '/#auto_boostrap/s/#auto_boostrap/auto_boostrap/' /etc/cassandra/cassandra.yaml
+  command: "sed -i -e '/#auto_boostrap/s/#auto_boostrap/auto_boostrap/' {{ cassandra_config_dir }}/cassandra.yaml"
 
-- name: Cassandra startup
+- include: dse_config.yml
+  when: install_version == "dse"
+
+- name: Cassandra DCE startup
+  when: install_version == "dce"
   service: name=cassandra state=restarted
+
+- name: Cassandra DSE startup
+  when: install_version == "dse"
+  service: name=dse state=restarted
 
 - name: Wait for startup
   pause: seconds=30
 
 - name: Disable config to replace existing dead node
   when: "{{ replace_dead_server | default(false) }} == true"
-  command: "sed -i -e '/cassandra.replace_address/s/JVM_OPTS=/#JVM_OPTS=/' /etc/cassandra/cassandra-env.sh"
+  command: "sed -i -e '/cassandra.replace_address/s/JVM_OPTS=/#JVM_OPTS=/' {{ cassandra_config_dir }}/cassandra-env.sh"
 
 - name: Re-enable auto_bootstrap for empty cluster
   when: "{{ empty_cluster | default(false) }} == true"
-  command: sed -i -e '/auto_boostrap/s/auto_boostrap/#auto_boostrap/' /etc/cassandra/cassandra.yaml
+  command: "sed -i -e '/auto_boostrap/s/auto_boostrap/#auto_boostrap/' {{ cassandra_config_dir }}/cassandra.yaml"
 
 ### === Workaround to fix sstablerepairedset script (broken with current .deb package) === ####
 - name: Copy sstablerepairedset.patch
@@ -134,7 +167,7 @@
   when: "{{ init_server | default(false) }} == true"
 
 - name: Copy tokens from node
-  fetch: src=/etc/cassandra/TOKENS dest=inventory/tokens/{{ ansible_hostname }}.token flat=yes
+  fetch: "src={{ cassandra_config_dir }}/TOKENS dest=inventory/tokens/{{ ansible_hostname }}.token flat=yes"
   when: "{{ init_server | default(false) }} == true"
 
 - include: s3_backup.yml

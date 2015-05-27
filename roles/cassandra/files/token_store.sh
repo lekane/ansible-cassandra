@@ -31,8 +31,14 @@
 HOSTNAME=$(hostname)
 export TOKENS=$(nodetool info -T | grep ^Token | awk '{ print $3 }' | tr \\n , | sed -e 's/,$/\n/')
 
-cp /etc/cassandra/cassandra.yaml /etc/cassandra/cassandra.yaml.pre_token_bak
+if [ -d "/etc/dse" ]; then
+   CASSANDRA_CONF_DIR=/etc/dse/cassandra
+else
+   CASSANDRA_CONF_DIR=/etc/cassandra
+fi
 
-sed -i -e '/initial_token:/s/.*/initial_token: '$TOKENS/ /etc/cassandra/cassandra.yaml
+cp $CASSANDRA_CONF_DIR/cassandra.yaml $CASSANDRA_CONF_DIR/cassandra.yaml.pre_token_bak
 
-echo $TOKENS >> /etc/cassandra/TOKENS
+sed -i -e '/initial_token:/s/.*/initial_token: '$TOKENS/ $CASSANDRA_CONF_DIR/cassandra.yaml
+
+echo $TOKENS >> $CASSANDRA_CONF_DIR/TOKENS

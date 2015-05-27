@@ -1,3 +1,5 @@
 dsc_version: 2.1.5-1
 cassandra_version: 2.1.5
 cassandra_tools_version: 2.1.5
+
+dse_version: 4.7.0-1

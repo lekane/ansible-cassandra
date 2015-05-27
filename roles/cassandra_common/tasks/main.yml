@@ -64,17 +64,16 @@
 
 - debug: var=seeds
 
-- name: Add Datastax repository
+- name: Add Datastax repository (DCE)
   shell: echo "deb http://debian.datastax.com/community stable main" > /etc/apt/sources.list.d/cassandra.sources.list
-  
+  when: install_version == "dce"
+
+- name: Add Datastax repository (DSE)
+  shell: echo "deb http://{{ dse_username }}:{{ dse_password }}@debian.datastax.com/enterprise stable main" > /etc/apt/sources.list.d/datastax.sources.list
+  when: install_version == "dse"
+
 - name: Add Datastax repository key
   shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
-
-- name: Install python-software-properties package
-  apt: pkg=python-software-properties state=present
-
-- name: Install python-setuptools package
-  apt: pkg=python-setuptools state=present
 
 - name: Add Oracle Java PPA repo
   apt_repository: repo='ppa:webupd8team/java'
@@ -85,5 +84,14 @@
 - name: Accept Oracle license (2/2)
   shell: "echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections"
 
+- name: Update APT cache
+  apt: update_cache=true
+
+- name: Install python-software-properties package
+  apt: pkg=python-software-properties state=present
+
+- name: Install python-setuptools package
+  apt: pkg=python-setuptools state=present
+
 - name: Install Oracle Java
-  apt: name=oracle-java7-installer state=latest update_cache=true
+  apt: name=oracle-java7-installer state=latest
