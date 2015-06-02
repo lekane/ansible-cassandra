@@ -89,6 +89,9 @@
 - name: Create saved_caches directory
   file: path=/data/cassandra/saved_caches state=directory owner=cassandra group=cassandra mode=0755
 
+- name: Create commitlog backup directory
+  file: path=/data/cassandra/commit_log_backup state=directory owner=cassandra group=cassandra mode=0755
+
 - name: Backup original cassandra.yaml
   command: "cp {{ cassandra_config_dir }}/cassandra.yaml {{ cassandra_config_dir }}/cassandra.yaml.orig creates={{ cassandra_config_dir }}/cassandra.yaml.orig"
 

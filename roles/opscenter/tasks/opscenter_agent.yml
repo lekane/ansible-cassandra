@@ -42,8 +42,14 @@
 - name: Configure Opscenter agent SSL (disabled)
   shell: "echo use_ssl: 0 | tee -a /var/lib/datastax-agent/conf/address.yaml"
 
+- name: Configure backup tmp directory
+  shell: "echo tmp_dir: /data/cassandra/backup_tmp | tee -a /var/lib/datastax-agent/conf/address.yaml"
+
 - name: Set address.yaml permissions
   file: path=/var/lib/datastax-agent/conf/address.yaml owner=cassandra group=cassandra mode=0664
+  
+- name: Create backup temp directory
+  file: path=/data/cassandra/backup_tmp state=directory owner=cassandra group=cassandra mode=0755
 
 - name: Opscenter agent startup
   service: name=datastax-agent state=restarted
