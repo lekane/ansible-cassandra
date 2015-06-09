@@ -54,5 +54,10 @@
 - name: Template /etc/default/tablesnap
   template: src=tablesnap_default.j2 dest=/etc/default/tablesnap
 
-- name: Start tablesnap service
-  service: name=tablesnap state=restarted
+- name: Enable tablesnap service (backups enabled)
+  service: name=tablesnap state=restarted enabled=yes
+  when: "{{ s3_backup_enabled | default(false) }} == true"
+
+- name: Disable tablesnap service (backups disabled)
+  service: name=tablesnap state=stopped enabled=no
+  when: "{{ s3_backup_enabled | default(false) }} == false"
