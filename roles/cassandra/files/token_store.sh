@@ -41,4 +41,4 @@ cp $CASSANDRA_CONF_DIR/cassandra.yaml $CASSANDRA_CONF_DIR/cassandra.yaml.pre_tok
 
 sed -i -e '/initial_token:/s/.*/initial_token: '$TOKENS/ $CASSANDRA_CONF_DIR/cassandra.yaml
 
-echo $TOKENS >> $CASSANDRA_CONF_DIR/TOKENS
+echo $TOKENS | tee $CASSANDRA_CONF_DIR/TOKENS
