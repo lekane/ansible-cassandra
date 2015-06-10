@@ -43,6 +43,17 @@
   file: src=/ephemeral dest=/data state=link
   when: "{{ init_server | default(false) }} == true and deployment_environment == 'euca'"
 
+- name: Stop Cassandra DCE
+  when: "{{ init_server | default(false) }} == false and install_version == 'dce'"
+  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
+
+- name: Stop Cassandra DSE
+  when: "{{ init_server | default(false) }} == false and install_version == 'dse'"
+  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service dse stop"
+
+- name: Clear Cassandra logs
+  shell: echo > /var/log/cassandra/system.log
+
 - name: Install Datastax Community Cassandra & tools
   when: install_version == "dce"
   apt: pkg={{item}} state=present
@@ -57,8 +68,9 @@
   with_items:
   - dse-full={{ dse_version }}
 
-- name: Pause
-  pause: seconds=10
+- name: Wait for server autostart
+  when: "{{ init_server | default(false) }} == true"
+  wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients"
 
 - name: Stop Cassandra DCE (autostarted on install)
   when: "{{ init_server | default(false) }} == true and install_version == 'dce'"
@@ -68,13 +80,9 @@
   when: "{{ init_server | default(false) }} == true and install_version == 'dse'"
   service: name=dse state=stopped
 
-- name: Stop Cassandra DCE
-  when: "{{ init_server | default(false) }} == false and install_version == 'dce'"
-  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
-
-- name: Stop Cassandra DSE
-  when: "{{ init_server | default(false) }} == false and install_version == 'dse'"
-  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service dse stop"
+- name: Clear Cassandra logs (after autostart)
+  when: "{{ init_server | default(false) }} == true"
+  shell: echo > /var/log/cassandra/system.log
 
 - name: Remove cluster metadata
   shell: rm -rf /var/lib/cassandra/*
@@ -138,8 +146,8 @@
   when: install_version == "dse"
   service: name=dse state=restarted
 
-- name: Wait for startup
-  pause: seconds=30
+- name: Wait for Cassandra startup
+  wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients"
 
 - name: Disable config to replace existing dead node
   when: "{{ replace_dead_server | default(false) }} == true"
