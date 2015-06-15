@@ -51,7 +51,12 @@
   when: "{{ init_server | default(false) }} == false and install_version == 'dse'"
   shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service dse stop"
 
-- name: Clear Cassandra logs
+- name: Check Cassandra system.log existence
+  stat: path=/var/log/cassandra/system.log
+  register: system_log_file
+
+- name: Clear Cassandra system.log
+  when: system_log_file.stat.exists == True
   shell: echo > /var/log/cassandra/system.log
 
 - name: Install Datastax Community Cassandra & tools
