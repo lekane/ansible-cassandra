@@ -35,4 +35,4 @@
     weekday: "{{ repair_weekday }}" 
     minute: 00
     hour: 03
-    job: "/usr/bin/nodetool repair >> ~/cron.log 2>&1"
+    job: "/usr/bin/nodetool repair -pr >> ~/cron.log 2>&1"
