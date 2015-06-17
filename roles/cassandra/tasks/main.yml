@@ -62,6 +62,7 @@
 - name: Install Datastax Community Cassandra & tools
   when: install_version == "dce"
   apt: pkg={{item}} state=present
+  register: cassandra_installed
   with_items:
   - dsc21={{ dsc_version }}
   - cassandra={{ cassandra_version }}
@@ -69,12 +70,13 @@
 
 - name: Install Datastax Enterprise Cassandra
   when: install_version == "dse"
+  register: cassandra_installed
   apt: pkg={{item}} state=present
   with_items:
   - dse-full={{ dse_version }}
 
 - name: Wait for server autostart
-  when: "{{ init_server | default(false) }} == true"
+  when: "{{ init_server | default(false) }} == true and cassandra_installed.changed"
   wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients"
 
 - name: Stop Cassandra DCE (autostarted on install)
