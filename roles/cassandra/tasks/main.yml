@@ -90,6 +90,9 @@
 - name: Clear Cassandra logs (after autostart)
   when: "{{ init_server | default(false) }} == true"
   shell: echo > /var/log/cassandra/system.log
+  
+- name: Cassandra system.log ownership check
+  file: path=/var/log/cassandra/system.log owner=cassandra group=cassandra mode=0644
 
 - name: Remove cluster metadata
   shell: rm -rf /var/lib/cassandra/*
@@ -153,8 +156,13 @@
   when: install_version == "dse"
   service: name=dse state=restarted
 
-- name: Wait for Cassandra startup
+- name: Wait for Cassandra startup (not bootstrapping)
   wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients"
+  when: "{{ init_server | default(false) }} == false"
+
+- name: Wait for Cassandra startup (bootstrapping)
+  pause: seconds=90
+  when: "{{ init_server | default(false) }} == true"
 
 - name: Disable config to replace existing dead node
   when: "{{ replace_dead_server | default(false) }} == true"
