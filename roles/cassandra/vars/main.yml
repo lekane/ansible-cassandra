@@ -1,5 +1,5 @@
-dsc_version: 2.1.6-1
-cassandra_version: 2.1.6
-cassandra_tools_version: 2.1.6
+dsc_version: 2.1.7-1
+cassandra_version: 2.1.7
+cassandra_tools_version: 2.1.7
 
 dse_version: 4.7.0-1
