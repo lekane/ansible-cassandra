@@ -1,3 +1,4 @@
+---
 # Copyright (c) 2014 Lekane Oy. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,45 +27,46 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[cassandra_nodes]
-<CASSANDRA_NODE1> node_ip=<CASSANDRA_NODE1_IP> repair_weekday=MON,THU seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE2> node_ip=<CASSANDRA_NODE2_IP> repair_weekday=TUE,FRI seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> repair_weekday=WED,SAT seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE4> node_ip=<CASSANDRA_NODE4_IP> repair_weekday=THU,SUN seed=true dc=DC1 rack=RAC1 spark_enabled=true
-
-[cassandra_nodes:vars]
-s3_backup_enabled=false
-s3_backup_environment=aws
-s3_backup_host=<host>
-s3_backup_bucket=<bucket>
-s3_backup_keyspace=<keyspace>
-s3_backup_access_key=<access_key>
-s3_backup_secret_key=<secret_key>
-spark_enabled=false
-
-[opscenter_nodes]
-<OPSCENTER_NODE> node_ip=<OPSCENTER_NODE_IP>
-
-[opscenter_nodes:vars]
-spark_enabled=false
-
-[spark_master_nodes]
-<SPARK_MASTER_NODE> node_ip=<SPARK_MASTER_NODE_IP>
-
-[spark_master_nodes:vars]
-spark_enabled=true
-
-[all_cassandra_nodes:children]
-cassandra_nodes
-opscenter_nodes
-spark_master_nodes
-
-[all_cassandra_nodes:vars]
-ansible_ssh_private_key_file=<SSH_PEM>
-ansible_ssh_user=ubuntu
-install_user=ubuntu
-deployment_environment=aws
-install_version=dce
-spark_enabled=false
-dse_user=<DSE user>
-dse_password=<DSE password>
+- name: Set spark_master node fact
+  set_fact: spark_master_node={{ groups[['spark_master_nodes'][0]][0] }}
+- name:  Set spark_master ip fact
+  set_fact: spark_master_ip="{{ hostvars[spark_master_node].node_ip }}"
+- name: Create spark group
+  group: name=spark state=present
+- name: Create spark user
+  user: name=spark shell=/bin/bash group=spark
+- name: Download Spark
+  get_url: url={{ spark_url }} dest=/tmp/spark.tgz validate_certs=no
+- name: Extract Spark
+  shell: tar -zxvpf /tmp/spark.tgz -C /opt
+- name: Create spark symlink
+  file: "src=/opt/{{ spark_version }} dest=/opt/spark state=link"
+- name: Configure Spark
+  template: src={{item}}.j2 dest=/opt/spark/conf/{{item}} owner=spark group=spark
+  with_items:
+     - spark-defaults.conf
+     - spark-env.sh
+     - log4j.properties
+- name: Delete existing Spark directories
+  file: path=/opt/spark/{{item}} state=absent
+  with_items:
+    - logs
+    - pids
+    - work
+    - tmp
+- name: Create Spark directories
+  file: path=/data/spark/{{item}} state=directory owner=spark group=spark mode=0775
+  with_items:
+    - logs
+    - pids
+    - work
+    - tmp
+- name: Symlink Spark directories
+  file: src=/data/spark/{{item}} dest=/opt/spark/{{item}} state=link
+  with_items:
+    - logs
+    - pids
+    - work
+    - tmp
+- name: Configure all Spark directory permissions
+  file: path=/opt/spark state=directory recurse=yes mode=0755 owner=spark group=spark

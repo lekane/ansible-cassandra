@@ -1,3 +1,4 @@
+---
 # Copyright (c) 2014 Lekane Oy. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,45 +27,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[cassandra_nodes]
-<CASSANDRA_NODE1> node_ip=<CASSANDRA_NODE1_IP> repair_weekday=MON,THU seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE2> node_ip=<CASSANDRA_NODE2_IP> repair_weekday=TUE,FRI seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> repair_weekday=WED,SAT seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE4> node_ip=<CASSANDRA_NODE4_IP> repair_weekday=THU,SUN seed=true dc=DC1 rack=RAC1 spark_enabled=true
-
-[cassandra_nodes:vars]
-s3_backup_enabled=false
-s3_backup_environment=aws
-s3_backup_host=<host>
-s3_backup_bucket=<bucket>
-s3_backup_keyspace=<keyspace>
-s3_backup_access_key=<access_key>
-s3_backup_secret_key=<secret_key>
-spark_enabled=false
-
-[opscenter_nodes]
-<OPSCENTER_NODE> node_ip=<OPSCENTER_NODE_IP>
-
-[opscenter_nodes:vars]
-spark_enabled=false
-
-[spark_master_nodes]
-<SPARK_MASTER_NODE> node_ip=<SPARK_MASTER_NODE_IP>
-
-[spark_master_nodes:vars]
-spark_enabled=true
-
-[all_cassandra_nodes:children]
-cassandra_nodes
-opscenter_nodes
-spark_master_nodes
-
-[all_cassandra_nodes:vars]
-ansible_ssh_private_key_file=<SSH_PEM>
-ansible_ssh_user=ubuntu
-install_user=ubuntu
-deployment_environment=aws
-install_version=dce
-spark_enabled=false
-dse_user=<DSE user>
-dse_password=<DSE password>
+spark_environment: {}

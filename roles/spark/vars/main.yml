@@ -1,0 +1,24 @@
+spark_version: spark-1.4.0-bin-hadoop2.6
+spark_url: http://d3kbcqa49mib13.cloudfront.net/{{ spark_version }}.tgz
+
+spark_env:
+  SPARK_CONF_DIR: /opt/spark/conf
+  SPARK_LOG_DIR: /opt/spark/logs
+  SPARK_PID_DIR: /opt/spark/pids
+  SPARK_WORKER_DIR: /opt/spark/work
+  SPARK_LOCAL_DIRS: /opt/spark/tmp
+  SPARK_WORKER_INSTANCES: 2
+  SPARK_WORKER_CORES: 1
+  SPARK_WORKER_MEMORY: 512m
+  SPARK_DRIVER_MEMORY: 512m
+  SPARK_REPL_MEM: 512m
+  SPARK_WORKER_PORT: 9000
+  SPARK_MASTER_OPTS: $LOG4J -Dspark.log.file=/opt/spark/logs/master.log
+  SPARK_WORKER_OPTS: $LOG4J -Dspark.log.file=/opt/spark/logs/worker.log
+  SPARK_EXECUTOR_OPTS: $LOG4J -Djava.io.tmpdir=/opt/spark/tmp/executor 
+  SPARK_REPL_OPTS: -Djava.io.tmpdir=/opt/spark/tmp/repl/\$USER 
+  SPARK_APP_OPTS: -Djava.io.tmpdir=/opt/spark/tmp/app/\$USER 
+
+spark_defaults:
+  spark.serializer: org.apache.spark.serializer.KryoSerializer
+  spark.executor.memory:  512m

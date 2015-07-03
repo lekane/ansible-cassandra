@@ -78,3 +78,13 @@
   environment: proxy_env
   roles:
   - { role: cassandra_cron, tags: ['cron'] }
+
+- name: Spark install
+  hosts: 
+    - spark_master_nodes
+    - cassandra_nodes
+  user: install_user
+  sudo: yes
+  environment: proxy_env
+  roles:
+  - { role: spark, tags: ['spark'], when: install_version == "dce" and (spark_enabled | default(false)) == "true"  }  
