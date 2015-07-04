@@ -39,6 +39,12 @@
   get_url: url={{ spark_url }} dest=/tmp/spark.tgz validate_certs=no
 - name: Extract Spark
   shell: tar -zxvpf /tmp/spark.tgz -C /opt
+- name: Check if spark symlink exists
+  stat: path=/opt/spark
+  register: spark_path
+- name: Remove spark symlink
+  file: "path=/opt/spark state=absent"
+  when: spark_path.stat.islnk
 - name: Create spark symlink
   file: "src=/opt/{{ spark_version }} dest=/opt/spark state=link"
 - name: Configure Spark
@@ -68,5 +74,9 @@
     - pids
     - work
     - tmp
+- name: Create spark-cassandra-connector directory
+  file: path=/opt/spark/spark-cassandra-connector state=directory owner=spark group=spark mode=0775
+- name: Copy spark-cassandra-connector jar
+  copy: src=spark-cassandra-connector-{{ spark_connector_version }}.jar dest=/opt/spark/spark-cassandra-connector/spark-cassandra-connector-{{ spark_connector_version }}.jar owner=spark group=spark mode=0644
 - name: Configure all Spark directory permissions
   file: path=/opt/spark state=directory recurse=yes mode=0755 owner=spark group=spark
