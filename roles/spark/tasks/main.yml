@@ -31,10 +31,22 @@
   set_fact: spark_master_node={{ groups[['spark_master_nodes'][0]][0] }}
 - name:  Set spark_master ip fact
   set_fact: spark_master_ip="{{ hostvars[spark_master_node].node_ip }}"
+- name: Create spark ssh key
+  local_action: command ssh-keygen -t rsa -P '' -f /tmp/spark_ssh creates=/tmp/spark_ssh
+  sudo: no
+  run_once: True
 - name: Create spark group
   group: name=spark state=present
 - name: Create spark user
   user: name=spark shell=/bin/bash group=spark
+- name: Create spark user ssh directory
+  file: path=/home/spark/.ssh state=directory owner=spark group=spark mode=0700
+- name: Copy spark ssh keys
+  copy: src=/tmp/spark_ssh dest=/home/spark/.ssh/id_rsa owner=spark group=spark mode=0600
+- name: Copy spark ssh pub key
+  copy: src=/tmp/spark_ssh.pub dest=/home/spark/.ssh/id_rsa.pub owner=spark group=spark mode=0644
+- name: Setup ssh authorized key for passwordless login for spark user
+  authorized_key: user=spark key="{{ lookup('file', '/tmp/spark_ssh.pub') }}"
 - name: Download Spark
   get_url: url={{ spark_url }} dest=/tmp/spark.tgz validate_certs=no
 - name: Extract Spark
@@ -79,4 +91,9 @@
 - name: Copy spark-cassandra-connector jar
   copy: src=spark-cassandra-connector-{{ spark_connector_version }}.jar dest=/opt/spark/spark-cassandra-connector/spark-cassandra-connector-{{ spark_connector_version }}.jar owner=spark group=spark mode=0644
 - name: Configure all Spark directory permissions
-  file: path=/opt/spark state=directory recurse=yes mode=0755 owner=spark group=spark
+  file: path=/opt/{{ item }} state=directory recurse=yes mode=0755 owner=spark group=spark
+  with_items:
+    - spark
+    - "{{ spark_version }}"
+- name: Template slaves list
+  template: src=slaves.j2 dest=/opt/spark/conf/slaves owner=spark group=spark mode=0664
