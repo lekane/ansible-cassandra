@@ -90,6 +90,8 @@
   file: path=/opt/spark/spark-cassandra-connector state=directory owner=spark group=spark mode=0775
 - name: Copy spark-cassandra-connector jar
   copy: src=spark-cassandra-connector-{{ spark_connector_version }}.jar dest=/opt/spark/spark-cassandra-connector/spark-cassandra-connector-{{ spark_connector_version }}.jar owner=spark group=spark mode=0644
+- name: Copy spark-shell-init.spark
+  copy: src=spark-shell-init.spark dest=/opt/spark/spark-shell-init.spark owner=spark group=spark mode=0644
 - name: Configure all Spark directory permissions
   file: path=/opt/{{ item }} state=directory recurse=yes mode=0755 owner=spark group=spark
   with_items:
