@@ -66,5 +66,6 @@ install_user=ubuntu
 deployment_environment=aws
 install_version=dce
 spark_enabled=false
+opscenter_enabled=true
 dse_user=<DSE user>
 dse_password=<DSE password>
