@@ -69,7 +69,7 @@
   sudo: yes
   environment: proxy_env
   roles:
-  - { role: opscenter, tags: ['opscenter'], when: (opscenter_enabled | default(false)) == true  }
+  - { role: opscenter, tags: ['opscenter'], when: (opscenter_enabled | default(false)) == "true"  }
 
 - name: Cassandra cron install
   hosts: cassandra_nodes
@@ -87,4 +87,4 @@
   sudo: yes
   environment: proxy_env
   roles:
-  - { role: spark, tags: ['spark'], when: install_version == "dce" and (spark_enabled | default(false)) == true }  
+  - { role: spark, tags: ['spark'], when: install_version == "dce" and (spark_enabled | default(false)) == "true" }
