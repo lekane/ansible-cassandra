@@ -18,7 +18,7 @@ spark.cassandra.connection.host       {{ spark_cassandra_connection_host }}
 spark.driver.extraClassPath           /opt/spark/spark-cassandra-connector/spark-cassandra-connector-{{ spark_connector_version }}.jar
 spark.executor.extraClassPath         /opt/spark/spark-cassandra-connector/spark-cassandra-connector-{{ spark_connector_version }}.jar
 
-spark.cassandra.connection.local_dc   DC_Analytics
+spark.cassandra.connection.local_dc   {{ spark_datacenter }}
 
 ##### From vars ######
 

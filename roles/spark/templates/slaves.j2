@@ -1,4 +1,4 @@
-{%- for node in groups['cassandra_nodes']  -%}
+{%- for node in groups['spark_nodes']  -%}
 {%- if hostvars[node].spark_enabled == "true" -%}
 {{ hostvars[node].node_ip }}
 {% endif %}

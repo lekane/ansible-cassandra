@@ -30,7 +30,8 @@
 - name: Set spark_master node fact
   set_fact: spark_master_node={{ groups[['spark_master_nodes'][0]][0] }}
 - name:  Set spark_master ip fact
-  set_fact: spark_master_ip="{{ hostvars[spark_master_node].node_ip }}"
+  set_fact: spark_master_ip="{{ hostvars[spark_master_node].spark_master_ip }}"
+- debug: var=spark_master_ip
 - name: Create spark ssh key
   local_action: command ssh-keygen -t rsa -P '' -f /tmp/spark_ssh creates=/tmp/spark_ssh
   sudo: no
@@ -56,7 +57,7 @@
   register: spark_path
 - name: Remove spark symlink
   file: "path=/opt/spark state=absent"
-  when: spark_path.stat.islnk
+  when: spark_path.stat.islnk is defined
 - name: Create spark symlink
   file: "src=/opt/{{ spark_version }} dest=/opt/spark state=link"
 - name: Configure Spark

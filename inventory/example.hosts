@@ -26,11 +26,24 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[cassandra_nodes]
+[plain_cassandra_nodes]
 <CASSANDRA_NODE1> node_ip=<CASSANDRA_NODE1_IP> repair_weekday=MON,THU seed=true dc=DC1 rack=RAC1
 <CASSANDRA_NODE2> node_ip=<CASSANDRA_NODE2_IP> repair_weekday=TUE,FRI seed=true dc=DC1 rack=RAC1
 <CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> repair_weekday=WED,SAT seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE4> node_ip=<CASSANDRA_NODE4_IP> repair_weekday=THU,SUN seed=true dc=DC1 rack=RAC1 spark_enabled=true
+<CASSANDRA_NODE4> node_ip=<CASSANDRA_NODE4_IP> repair_weekday=THU,SUN seed=true dc=DC1 rack=RAC1
+
+[spark_nodes]
+<SPARK_NODE1> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> repair_weekday=MON,THU seed=true dc=DC2 rack=RAC1
+<SPARK_NODE2> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> repair_weekday=TUE,FRI seed=true dc=DC2 rack=RAC1
+<SPARK_NODE3> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> repair_weekday=WED,SAT seed=false dc=DC2 rack=RAC1
+
+[spark_nodes:vars]
+spark_enabled=true
+spark_datacenter=DC2
+
+[cassandra_nodes:children]
+plain_cassandra_nodes
+spark_nodes
 
 [cassandra_nodes:vars]
 s3_backup_enabled=false
@@ -49,7 +62,7 @@ spark_enabled=false
 spark_enabled=false
 
 [spark_master_nodes]
-<SPARK_MASTER_NODE> node_ip=<SPARK_MASTER_NODE_IP>
+<SPARK_MASTER_NODE> node_ip=<SPARK_MASTER_NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> spark_master_ip=<SPARK_MASTER_NODE_IP_FOR_SPARK>
 
 [spark_master_nodes:vars]
 spark_enabled=true

@@ -59,6 +59,6 @@ export {{ key }}="{{ value }}"
 ##### Templated #####
 
 SPARK_MASTER_IP="{{ spark_master_ip }}"
-SPARK_LOCAL_IP="{{ node_ip }}"
+SPARK_LOCAL_IP="{{ spark_node_ip }}"
 SPARK_PUBLIC_DNS="{{ node_ip }}"
 LOG4J="-Dlog4j.configuration=file://$SPARK_CONF_DIR/log4j.properties"
