@@ -39,5 +39,8 @@
 - name: Template cluster config
   template: "src=cluster.j2 dest=/etc/opscenter/clusters/{{ cluster_name }}.conf mode=0644"
 
+- name: Stop OpsCenter service
+  service: name=opscenterd state=stopped
+  
 - name: Start OpsCenter service
-  service: name=opscenterd state=restarted
+  service: name=opscenterd state=started
