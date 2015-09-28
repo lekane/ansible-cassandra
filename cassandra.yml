@@ -42,6 +42,9 @@
 # To update/upgrade nodes in existing cluster:
 # ansible-playbook -i <inventory> cassandra.yml 
 #
+# To update/upgrade node extra config (backup, cron etc) without configuring & restarting main Cassandra service in existing cluster:
+# ansible-playbook -i <inventory> --extra-vars="restart_cassandra=false" cassandra.yml 
+#
 # To target specific node/nodes, add -l node1[,node2]
 
 - name: Cassandra base requirements installation
