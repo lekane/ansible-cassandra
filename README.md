@@ -31,6 +31,8 @@ all_cassandra_nodes | deployment_environment | aws, euca | - | environment for i
 all_cassandra_nodes | install_version | dce, dse | - | Cassandra to install (dce=Datastax Community Edition, dse=Datastax Enterprise Edition)
 all_cassandra_nodes | dse_username | <DSE username> | - | DSE username (only for DSE install)
 all_cassandra_nodes | dse_password | <DSE password> | - | DSE password (only for DSE install)
+all_cassandra_nodes | repair_start_hour | 00-23 | 03 | Hour to start cron based repair
+all_cassandra_nodes | repair_start_minute | 00-59 | 0 | Minute to start cron based repair
 
 Requirements:
 - Ansible 1.8 or later

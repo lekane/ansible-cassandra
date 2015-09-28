@@ -52,6 +52,8 @@ s3_backup_bucket=<bucket>
 s3_backup_keyspace=<keyspace>
 s3_backup_access_key=<access_key>
 s3_backup_secret_key=<secret_key>
+repair_start_hour=02
+repair_start_minute=0
 
 [opscenter_nodes]
 <OPSCENTER_NODE> node_ip=<OPSCENTER_NODE_IP>

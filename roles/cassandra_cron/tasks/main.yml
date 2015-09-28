@@ -33,6 +33,6 @@
     name: "nodetool repair" 
     user: "{{ install_user }}" 
     weekday: "{{ repair_weekday }}" 
-    minute: 00
-    hour: 03
+    minute: "{{ repair_start_minute | default('0') }}"
+    hour: "{{ repair_start_hour | default('3') }}"
     job: "/usr/bin/nodetool repair -pr >> ~/cron.log 2>&1"
