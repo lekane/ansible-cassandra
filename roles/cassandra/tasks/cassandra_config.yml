@@ -35,6 +35,10 @@
   when: install_version == "dse"
   set_fact: cassandra_config_dir=/etc/dse/cassandra
 
+- name: Check for cassandra_config_dir existence
+  stat: path={{ cassandra_config_dir }}
+  register: cassandra_config_dir_state
+
 - name: Create RAID-0 from ephemeral drives
   script: raid_ephemeral.sh
   when: "{{ init_server | default(false) }} == true and deployment_environment == 'aws'"
@@ -44,11 +48,11 @@
   when: "{{ init_server | default(false) }} == true and deployment_environment == 'euca'"
 
 - name: Stop Cassandra DCE
-  when: "{{ init_server | default(false) }} == false and install_version == 'dce'"
+  when: "{{ init_server | default(false) }} == false and install_version == 'dce' and cassandra_config_dir_state.stat.exists == true"
   shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
 
 - name: Stop Cassandra DSE
-  when: "{{ init_server | default(false) }} == false and install_version == 'dse'"
+  when: "{{ init_server | default(false) }} == false and install_version == 'dse' and cassandra_config_dir_state.stat.exists == true"
   shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service dse stop"
 
 - name: Check Cassandra system.log existence
@@ -62,7 +66,7 @@
 - name: Install Datastax Community Cassandra & tools
   when: install_version == "dce"
   apt: pkg={{item}} state=present
-  register: cassandra_installed
+  register: cassandra_installed_dce
   with_items:
   - dsc21={{ dsc_version }}
   - cassandra={{ cassandra_version }}
@@ -70,13 +74,16 @@
 
 - name: Install Datastax Enterprise Cassandra
   when: install_version == "dse"
-  register: cassandra_installed
+  register: cassandra_installed_dse
   apt: pkg={{item}} state=present
   with_items:
   - dse-full={{ dse_version }}
 
+- name: get cassandra_installed variable
+  set_fact: cassandra_installed="{{ cassandra_installed_dce.changed if install_version == 'dce' else cassandra_installed_dse.changed }}"
+
 - name: Wait for server autostart
-  when: "{{ init_server | default(false) }} == true and cassandra_installed.changed"
+  when: "{{ init_server | default(false) }} == true and {{ cassandra_installed }} == true"
   wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients"
 
 - name: Stop Cassandra DCE (autostarted on install)
@@ -90,7 +97,7 @@
 - name: Clear Cassandra logs (after autostart)
   when: "{{ init_server | default(false) }} == true"
   shell: echo > /var/log/cassandra/system.log
-  
+
 - name: Cassandra system.log ownership check
   file: path=/var/log/cassandra/system.log owner=cassandra group=cassandra mode=0644
 
