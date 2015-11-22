@@ -39,3 +39,6 @@ Requirements:
 - Ansible general configuration: "jinja2_extensions = jinja2.ext.do"
 - Nodes running Ubuntu 14.04 or later
 - Node have the following installed: git
+
+Running:
+- Check out main cassandra.yml comments for typical running options (e.g. new install, upgrade, cron/backup only updates etc)
