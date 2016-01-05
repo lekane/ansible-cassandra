@@ -164,7 +164,7 @@
   service: name=dse state=restarted
 
 - name: Wait for Cassandra startup (not bootstrapping)
-  wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients"
+  wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients" timeout=900
   when: "{{ init_server | default(false) }} == false"
 
 - name: Wait for Cassandra startup (bootstrapping)
