@@ -40,7 +40,7 @@
   register: cassandra_config_dir_state
 
 - name: Create RAID-0 from ephemeral drives
-  script: raid_ephemeral.sh
+  script: "raid_ephemeral.sh {{ deployment_environment }}"
   when: "{{ init_server | default(false) }} == true and deployment_environment == 'aws'"
 
 - name: Symlink /ephemeral to /data

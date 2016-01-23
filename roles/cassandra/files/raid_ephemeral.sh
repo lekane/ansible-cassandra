@@ -9,15 +9,15 @@
 #
 
 METADATA_URL_BASE="http://169.254.169.254/2012-01-12"
+CLOUD_PROVIDER="$1"
 
-# Configure Raid - take into account xvdb or sdb
 root_drive=`df -h | grep -v grep | awk 'NR==2{print $1}'`
 
-if [ "$root_drive" == "/dev/xvda1" ]; then
-  echo "Detected 'xvd' drive naming scheme (root: $root_drive)"
+if [ "$CLOUD_PROVIDER" == "aws" ]; then
+  echo "Using 'xvd' drive naming scheme (root: $root_drive)"
   DRIVE_SCHEME='xvd'
 else
-  echo "Detected 'sd' drive naming scheme (root: $root_drive)"
+  echo "Using 'sd' drive naming scheme (root: $root_drive)"
   DRIVE_SCHEME='sd'
 fi
 
