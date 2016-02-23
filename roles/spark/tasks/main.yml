@@ -49,9 +49,9 @@
 - name: Setup ssh authorized key for passwordless login for spark user
   authorized_key: user=spark key="{{ lookup('file', '/tmp/spark_ssh.pub') }}"
 - name: Download Spark
-  get_url: url={{ spark_url }} dest=/tmp/spark.tgz validate_certs=no
+  get_url: url={{ spark_url }} dest=/tmp/{{ spark_version }}.tgz validate_certs=no
 - name: Extract Spark
-  shell: tar -zxvpf /tmp/spark.tgz -C /opt
+  shell: tar -zxvpf /tmp/{{ spark_version }}.tgz -C /opt
 - name: Check if spark symlink exists
   stat: path=/opt/spark
   register: spark_path
