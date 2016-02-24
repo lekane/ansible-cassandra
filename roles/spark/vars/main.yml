@@ -33,5 +33,6 @@ spark_env:
 
 spark_defaults:
 #  spark.serializer: org.apache.spark.serializer.KryoSerializer
+#  spark.cores.max: 
   spark.executor.memory:  "{{ executor_memory }}"
-  spark.cores.max: 1
+  spark.cassandra.input.consistency.level: LOCAL_QUORUM
