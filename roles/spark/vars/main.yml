@@ -6,7 +6,7 @@ spark_url: http://d3kbcqa49mib13.cloudfront.net/{{ spark_version }}.tgz
 
 ##spark_connector_version: 1.3.0-M2
 #spark_connector_version: 1.4.0-M1
-spark_connector_version: 1.5.0-RC1
+spark_connector_version: 1.5.0
 
 worker_memory: 1024m
 driver_memory: 1024m
