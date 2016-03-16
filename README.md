@@ -21,18 +21,18 @@ cassandra_nodes | node_ip | true, false | - | IP for internal cluster communicat
 cassandra_nodes | spark_enabled | true, false | false | enable Spark on node (DSE only)
 cassandra_nodes | s3_backup_enabled | true, false | false | enable S3 backups
 cassandra_nodes | s3_backup_environment | aws, riakcs | - | environment for S3 backups
-cassandra_nodes | s3_backup_host| <host> | - | S3 host (for non-AWS)
-cassandra_nodes | s3_backup_bucket | <bucket> | - | S3 bucket where to store backups
-cassandra_nodes | s3_backup_keyspaces | <keyspace>,<keyspace>,... | - | Cassandra keyspaces to backup (comma separated)
-cassandra_nodes | s3_backup_access_key | <access_key> | - | S3 access key
-cassandra_nodes | s3_backup_secret_key | <secret_key> | - | S3 secret key
+cassandra_nodes | s3_backup_host| host | - | S3 host (for non-AWS)
+cassandra_nodes | s3_backup_bucket | bucket | - | S3 bucket where to store backups
+cassandra_nodes | s3_backup_keyspaces | keyspace,keyspace,... | - | Cassandra keyspaces to backup (comma separated)
+cassandra_nodes | s3_backup_access_key | access_key | - | S3 access key
+cassandra_nodes | s3_backup_secret_key | secret_key | - | S3 secret key
 --- | --- | --- | ---
 opscenter_nodes | node_ip | true, false | - | IP for internal cluster communications
 --- | --- | --- | ---
 all_cassandra_nodes | deployment_environment | aws, euca | - | environment for installation
 all_cassandra_nodes | install_version | dce, dse | - | Cassandra to install (dce=Datastax Community Edition, dse=Datastax Enterprise Edition)
-all_cassandra_nodes | dse_username | <DSE username> | - | DSE username (only for DSE install)
-all_cassandra_nodes | dse_password | <DSE password> | - | DSE password (only for DSE install)
+all_cassandra_nodes | dse_username | DSE username | - | DSE username (only for DSE install)
+all_cassandra_nodes | dse_password | DSE password | - | DSE password (only for DSE install)
 
 Requirements:
 - Ansible 2.0 or later
