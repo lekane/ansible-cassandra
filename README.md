@@ -1,5 +1,6 @@
 # ansible-cassandra
 Ansible provisioning/maintenance tasks for Cassandra
+Installs & manages upgrades for a DCE/DSE based Cassandra cluster, OpsCenter & Spark
 
 Usage:
 
@@ -42,3 +43,7 @@ Requirements:
 
 Running:
 - Check out main cassandra.yml comments for typical running options (e.g. new install, upgrade, cron/backup only updates etc)
+
+Spark setup:
+Typical way of setting up the environment would be to define 2 Cassandra data centers: one for real-time transactions (plain Cassandra) and
+another for analytics workloads (Cassandra with co-located Spark nodes). You can also use the playbook without installing Spark.
