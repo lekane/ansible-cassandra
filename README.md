@@ -1,6 +1,5 @@
 # ansible-cassandra
-Ansible provisioning/maintenance tasks for Cassandra
-Installs & manages upgrades for a DCE/DSE based Cassandra cluster, OpsCenter & Spark
+Ansible provisioning/maintenance tasks for Cassandra. Can be used to install & manage upgrades for a DCE/DSE based Cassandra cluster, OpsCenter & Spark
 
 Usage:
 
