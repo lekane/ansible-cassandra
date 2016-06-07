@@ -1,7 +1,7 @@
 {% set seeds = []  %}
 {%- for node in groups['cassandra_nodes']  -%}
 {%- if hostvars[node].seed == "true" -%}
-{% do seeds.append( hostvars[node].node_ip ) %}
+{% set ignored = seeds.append( hostvars[node].node_ip ) %}
 {% endif %}
 {% endfor %}
 {{ seeds | join(',') }}
