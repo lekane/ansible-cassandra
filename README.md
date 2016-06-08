@@ -36,7 +36,6 @@ all_cassandra_nodes | dse_password | DSE password | - | DSE password (only for D
 
 Requirements:
 - Ansible 2.0 or later
-- Ansible general configuration: "jinja2_extensions = jinja2.ext.do"
 - Nodes running Ubuntu 14.04 or later
 - Node have the following installed: git
 
