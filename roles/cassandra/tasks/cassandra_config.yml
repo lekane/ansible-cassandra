@@ -155,6 +155,8 @@
 - include: dse_config.yml
   when: install_version == "dse"
 
+- replace: dest=/etc/init.d/cassandra regexp='(\s+)cassandra\.\+CassandraDaemon(\s+.*)?$' replace='\1cassandra\2' backup=yes
+
 - name: Cassandra DCE startup
   when: install_version == "dce"
   service: name=cassandra state=restarted

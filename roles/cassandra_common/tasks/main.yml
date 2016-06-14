@@ -72,8 +72,10 @@
   shell: echo "deb http://{{ dse_username }}:{{ dse_password }}@debian.datastax.com/enterprise stable main" > /etc/apt/sources.list.d/datastax.sources.list
   when: install_version == "dse"
 
-- name: Add Datastax repository key
-  shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
+- apt_key: url=http://debian.datastax.com/debian/repo_key state=present
+
+#- name: Add Datastax repository key
+#  shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
 
 - name: Add Oracle Java PPA repo
   apt_repository: repo='ppa:webupd8team/java'
