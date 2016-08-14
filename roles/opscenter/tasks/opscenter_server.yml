@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - name: Install OpsCenter
-  apt: pkg=opscenter state=latest
+  apt: pkg=opscenter=5.2.4 state=present
 
 - name: Template opscenterd.conf
   template: src=opscenterd.j2 dest=/etc/opscenter/opscenterd.conf mode=0644
