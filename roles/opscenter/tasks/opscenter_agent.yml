@@ -34,7 +34,7 @@
   set_fact: opscenter_ip="{{ hostvars[opscenter_node].node_ip }}"
 
 - name: Install Opscenter agent
-  apt: pkg=datastax-agent state=latest
+  apt: pkg=datastax-agent=5.2.4 state=present
 
 - name: Configure Opscenter stomp
   shell: "echo stomp_interface: {{ opscenter_ip }} > /var/lib/datastax-agent/conf/address.yaml"
