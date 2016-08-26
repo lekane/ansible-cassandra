@@ -68,7 +68,7 @@
   apt: pkg={{item}} state=present
   register: cassandra_installed_dce
   with_items:
-  - dsc21={{ dsc_version }}
+  - dsc30={{ dsc_version }}
   - cassandra={{ cassandra_version }}
   - cassandra-tools={{ cassandra_tools_version }}
 
