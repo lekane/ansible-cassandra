@@ -179,22 +179,6 @@
   when: "{{ empty_cluster | default(false) }} == true"
   command: "sed -i -e '/auto_boostrap/s/auto_boostrap/#auto_boostrap/' {{ cassandra_config_dir }}/cassandra.yaml"
 
-### === Workaround to fix sstablerepairedset script (broken with current .deb package) === ####
-- name: Copy sstablerepairedset.patch
-  copy: src=sstablerepairedset.patch dest=/usr/bin/sstablerepairedset.patch owner=root group=root mode=0644
-  register: sstablerepairedset_patch
-
-- name: Backup original sstablerepairedset
-  command: cp /usr/bin/sstablerepairedset /usr/bin/sstablerepairedset.orig creates=/usr/bin/sstablerepairedset.orig
-  when: sstablerepairedset_patch|changed
-
-- name: Patch sstablerepairedset
-  shell: patch < sstablerepairedset.patch
-  when: sstablerepairedset_patch|changed
-  args:
-    chdir: /usr/bin
-### ======================================================================================= ####
-
 - name: Extract tokens & update cassandra.yaml
   script: token_store.sh
   when: "{{ init_server | default(false) }} == true"
