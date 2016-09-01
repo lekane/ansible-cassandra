@@ -84,7 +84,7 @@
 
 - name: Wait for server autostart
   when: "{{ init_server | default(false) }} == true and {{ cassandra_installed }} == true"
-  wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients"
+  wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients"
 
 - name: Stop Cassandra DCE (autostarted on install)
   when: "{{ init_server | default(false) }} == true and install_version == 'dce'"
