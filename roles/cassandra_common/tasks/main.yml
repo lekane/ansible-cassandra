@@ -94,4 +94,4 @@
   apt: pkg=python-setuptools state=present
 
 - name: Install Oracle Java
-  apt: name=oracle-java7-installer state=latest
+  apt: name=oracle-java8-installer state=latest

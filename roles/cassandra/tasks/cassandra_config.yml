@@ -68,7 +68,7 @@
   apt: pkg={{item}} state=present
   register: cassandra_installed_dce
   with_items:
-  - dsc21={{ dsc_version }}
+  - dsc30={{ dsc_version }}
   - cassandra={{ cassandra_version }}
   - cassandra-tools={{ cassandra_tools_version }}
 
@@ -84,7 +84,7 @@
 
 - name: Wait for server autostart
   when: "{{ init_server | default(false) }} == true and {{ cassandra_installed }} == true"
-  wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients"
+  wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients"
 
 - name: Stop Cassandra DCE (autostarted on install)
   when: "{{ init_server | default(false) }} == true and install_version == 'dce'"
@@ -117,6 +117,9 @@
 - name: Create commitlog backup directory
   file: path=/data/cassandra/commit_log_backup state=directory owner=cassandra group=cassandra mode=0755
 
+- name: Create hints directory
+  file: path=/data/cassandra/hints state=directory owner=cassandra group=cassandra mode=0755
+
 - name: Backup original cassandra.yaml
   command: "cp {{ cassandra_config_dir }}/cassandra.yaml {{ cassandra_config_dir }}/cassandra.yaml.orig.{{ cassandra_version }} creates={{ cassandra_config_dir }}/cassandra.yaml.orig.{{ cassandra_version }}"
 
@@ -129,17 +132,23 @@
 - name: Backup original cassandra-topology.properties
   command: "cp {{ cassandra_config_dir }}/cassandra-topology.properties {{ cassandra_config_dir }}/cassandra-topology.properties.orig.{{ cassandra_version }} creates={{ cassandra_config_dir }}/cassandra-topology.properties.orig.{{ cassandra_version }}"
 
+- name: Backup original jvm.options
+  command: "cp {{ cassandra_config_dir }}/jvm.options {{ cassandra_config_dir }}/jvm.options.orig.{{ cassandra_version }} creates={{ cassandra_config_dir }}/jvm.options.orig.{{ cassandra_version }}"
+
 - name: Template cassandra.yml
-  template: "src=cassandra.j2 dest={{ cassandra_config_dir }}/cassandra.yaml mode=0664"
+  template: "src=cassandra.yaml.j2 dest={{ cassandra_config_dir }}/cassandra.yaml mode=0664"
 
 - name: Template cassandra-env.sh
-  template: "src=cassandra-env.j2 dest={{ cassandra_config_dir }}/cassandra-env.sh mode=0664"
+  template: "src=cassandra-env.sh.j2 dest={{ cassandra_config_dir }}/cassandra-env.sh mode=0664"
 
 - name: Template cassandra-rackdc.properties
-  template: "src=cassandra-rackdc.j2 dest={{ cassandra_config_dir }}/cassandra-rackdc.properties mode=0664"
+  template: "src=cassandra-rackdc.properties.j2 dest={{ cassandra_config_dir }}/cassandra-rackdc.properties mode=0664"
 
 - name: Template cassandra-topology.properties
-  template: "src=cassandra-topology.j2 dest={{ cassandra_config_dir }}/cassandra-topology.properties mode=0664"
+  template: "src=cassandra-topology.properties.j2 dest={{ cassandra_config_dir }}/cassandra-topology.properties mode=0664"
+
+- name: Template jvm.options
+  template: "src=jvm.options.j2 dest={{ cassandra_config_dir }}/jvm.options mode=0664"
 
 - name: Enable performance tweaks
   script: performance_tweaks.sh
@@ -164,7 +173,7 @@
   service: name=dse state=restarted
 
 - name: Wait for Cassandra startup (bootstrapping)
-  wait_for: path=/var/log/cassandra/system.log search_regex="Listening for thrift clients" timeout=900
+  wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients" timeout=900
   when: "{{ init_server | default(false) }} == false"
 
 - name: Wait for Cassandra startup (not bootstrapping)
