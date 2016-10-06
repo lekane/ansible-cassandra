@@ -30,13 +30,13 @@
 - name: Checkout tablesnap
   git: repo=http://github.com/JeremyGrosser/tablesnap.git dest=/usr/local/bin/tablesnap_github force=yes version="{{ tablesnap_version }}"
 
-- name: Change tablesnap retry count
-  shell: "sed -i 's/default_retries = 1/default_retries = 5/' /usr/local/bin/tablesnap_github/tablesnap"
-
 - name: Install tablesnap
   shell: "python setup.py install"
   args:
       chdir: /usr/local/bin/tablesnap_github
+
+- name: Change tablesnap retry count
+  shell: "sed -i 's/default_retries = 1/default_retries = 5/' /usr/local/bin/tablesnap"
 
 - name: Template boto.cfg for RiakCS
   template: src=boto.j2 dest=/etc/boto.cfg
