@@ -6,6 +6,7 @@ Usage:
 1. Create the servers for Cassandra and Datastax OpsCenter
 2. Define an Ansible inventory (see inventory/example.hosts) for your environment
 3. Run the playbook to install Cassandra + Datastax OpsCenter
+- ansible-playbook -i inventory/hosts --extra-vars="init_server=true empty_cluster=true" cassandra.yml
 
 Inventory configuration:
 
