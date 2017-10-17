@@ -47,6 +47,10 @@
   file: src=/ephemeral dest=/data state=link
   when: "{{ init_server | default(false) }} == true and deployment_environment == 'euca'"
 
+- name: Create /data directory
+  file: path=/data state=directory owner=root group=root mode=0777
+  when: "{{ init_server | default(false) }} == true and deployment_environment == 'openstack'"
+
 - name: Stop Cassandra DCE
   when: "{{ init_server | default(false) }} == false and install_version == 'dce' and cassandra_config_dir_state.stat.exists == true"
   shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
