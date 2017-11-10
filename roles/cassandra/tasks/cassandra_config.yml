@@ -181,7 +181,7 @@
   when: "{{ init_server | default(false) }} == false"
 
 - name: Wait for Cassandra startup (not bootstrapping)
-  pause: seconds=90
+  pause: seconds=180
   when: "{{ init_server | default(false) }} == true"
 
 - name: Disable config to replace existing dead node
