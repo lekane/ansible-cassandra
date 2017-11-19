@@ -28,12 +28,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - name: Create repair cron job entry
-  cron: 
-    name: "nodetool repair" 
-    user: "{{ install_user }}" 
-    weekday: "{{ repair_weekday }}" 
+  cron:
+    name: "nodetool repair"
+    user: "{{ install_user }}"
+    weekday: "{{ repair_weekday }}"
     minute: "{{ repair_start_minute | default('0') }}"
     hour: "{{ repair_start_hour | default('3') }}"
     job: "/usr/bin/nodetool repair -pr >> ~/cron.log 2>&1"
     state: present
     disabled: no
+  when: (cron_repair_enabled | default("true")) == "true"
+
+- name: Remove repair cron job entry
+  cron:
+    name: "nodetool repair"
+    state: absent
+  when: (cron_repair_enabled | default("false")) == "false"
