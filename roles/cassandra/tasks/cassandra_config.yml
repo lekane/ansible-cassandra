@@ -35,6 +35,10 @@
   when: install_version == "dse"
   set_fact: cassandra_config_dir=/etc/dse/cassandra
 
+- name: Set cassandra_config_dir fact (Apache)
+  when: install_version == "apache"
+  set_fact: cassandra_config_dir=/etc/cassandra
+
 - name: Check for cassandra_config_dir existence
   stat: path={{ cassandra_config_dir }}
   register: cassandra_config_dir_state
@@ -61,6 +65,11 @@
   shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service dse stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
+- name: Stop Cassandra Apache
+  when: "{{ init_server | default(false) }} == false and install_version == 'apache' and cassandra_config_dir_state.stat.exists == true"
+  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
+  ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
+
 - name: Check Cassandra system.log existence
   stat: path=/var/log/cassandra/system.log
   register: system_log_file
@@ -85,8 +94,21 @@
   with_items:
   - dse-full={{ dse_version }}
 
-- name: get cassandra_installed variable
-  set_fact: cassandra_installed="{{ cassandra_installed_dce.changed if install_version == 'dce' else cassandra_installed_dse.changed }}"
+- name: Install Apache Cassandra
+  when: install_version == "apache"
+  apt: pkg={{item}} state=present
+  register: cassandra_installed_apache
+  with_items:
+  - cassandra={{ cassandra_version }}
+
+- name: get cassandra_installed variable (DCE)
+  set_fact: cassandra_installed="{{ cassandra_installed_dce.changed }}"
+
+- name: get cassandra_installed variable (DSE)
+  set_fact: cassandra_installed="{{ cassandra_installed_dse.changed }}"
+
+- name: get cassandra_installed variable (Apache)
+  set_fact: cassandra_installed="{{ cassandra_installed_apache.changed }}"
 
 - name: Wait for server autostart
   when: "{{ init_server | default(false) }} == true and {{ cassandra_installed }} == true"
@@ -99,6 +121,10 @@
 - name: Stop Cassandra DSE (autostarted on install)
   when: "{{ init_server | default(false) }} == true and install_version == 'dse'"
   service: name=dse state=stopped
+
+- name: Stop Cassandra Apache (autostarted on install)
+  when: "{{ init_server | default(false) }} == true and install_version == 'apache'"
+  service: name=cassandra state=stopped
 
 - name: Clear Cassandra logs (after autostart)
   when: "{{ init_server | default(false) }} == true"
@@ -177,6 +203,10 @@
 - name: Cassandra DSE startup
   when: install_version == "dse"
   service: name=dse state=restarted
+
+- name: Cassandra Apache startup
+  when: install_version == "apache"
+  service: name=cassandra state=restarted
 
 - name: Wait for Cassandra startup (bootstrapping)
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients" timeout=900

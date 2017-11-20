@@ -1,5 +1,5 @@
 dsc_version: 3.0.9-1
-cassandra_version: 3.0.9
+cassandra_version: 3.0.15
 cassandra_tools_version: 3.0.9
 
 dse_version: 4.7.0-1

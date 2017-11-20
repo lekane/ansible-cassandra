@@ -72,8 +72,21 @@
   shell: echo "deb http://{{ dse_username }}:{{ dse_password }}@debian.datastax.com/enterprise stable main" > /etc/apt/sources.list.d/datastax.sources.list
   when: install_version == "dse"
 
-- name: Add Datastax repository key
+- name: Add Apache repository (Apache)
+  shell: echo "deb http://www.apache.org/dist/cassandra/debian 30x main" > /etc/apt/sources.list.d/cassandra.sources.list
+  when: install_version == "apache"
+
+- name: Add Datastax repository key (DCE)
   shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
+  when: install_version == "dce"
+
+- name: Add Datastax repository key (DSE)
+  shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
+  when: install_version == "dse"
+
+- name: Add Apache repository key
+  shell: curl -L https://www.apache.org/dist/cassandra/KEYS | apt-key add -
+  when: install_version == "apache"
 
 - name: Add Oracle Java PPA repo
   apt_repository: repo='ppa:webupd8team/java'
