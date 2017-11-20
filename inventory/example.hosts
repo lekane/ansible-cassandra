@@ -55,6 +55,7 @@ s3_backup_secret_key=<secret_key>
 repair_start_hour=02
 repair_start_minute=0
 cron_repair_enabled=true
+ignore_shutdown_errors=false
 
 [opscenter_nodes]
 <OPSCENTER_NODE> node_ip=<OPSCENTER_NODE_IP>

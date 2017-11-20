@@ -54,10 +54,12 @@
 - name: Stop Cassandra DCE
   when: "{{ init_server | default(false) }} == false and install_version == 'dce' and cassandra_config_dir_state.stat.exists == true"
   shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
+  ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Stop Cassandra DSE
   when: "{{ init_server | default(false) }} == false and install_version == 'dse' and cassandra_config_dir_state.stat.exists == true"
   shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service dse stop"
+  ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Check Cassandra system.log existence
   stat: path=/var/log/cassandra/system.log
