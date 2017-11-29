@@ -65,31 +65,40 @@
 - debug: var=seeds
 
 - name: Add Datastax repository (DCE)
-  shell: echo "deb http://debian.datastax.com/community stable main" > /etc/apt/sources.list.d/cassandra.sources.list
+  apt_repository:
+    repo: "{{ repourl_datastax_ce | default('deb http://debian.datastax.com/community stable main') }}"
+    state: present
   when: install_version == "dce"
 
 - name: Add Datastax repository (DSE)
-  shell: echo "deb http://{{ dse_username }}:{{ dse_password }}@debian.datastax.com/enterprise stable main" > /etc/apt/sources.list.d/datastax.sources.list
-  when: install_version == "dse"
+  apt_repository:
+    repo: "{{ repourl_datastax_se | default('deb http://{{ dse_username }}:{{ dse_password }}@debian.datastax.com/enterprise stable main') }}"
+    state: present
+  when:
+    - install_version == "dse"
+    - dse_username is defined and dse_password is defined
 
-- name: Add Apache repository (Apache)
-  shell: echo "deb http://www.apache.org/dist/cassandra/debian 30x main" > /etc/apt/sources.list.d/cassandra.sources.list
-  when: install_version == "apache"
-
-- name: Add Datastax repository key (DCE)
-  shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
-  when: install_version == "dce"
-
-- name: Add Datastax repository key (DSE)
-  shell: curl -L http://debian.datastax.com/debian/repo_key | apt-key add -
-  when: install_version == "dse"
+- name: Add Datastax repository key
+  apt_key:
+    url: "{{ repokey_datastax | default('http://debian.datastax.com/debian/repo_key') }}"
+    state: present
+  when: install_version == "dce" or install_version == "dse"
 
 - name: Add Apache repository key
-  shell: curl -L https://www.apache.org/dist/cassandra/KEYS | apt-key add -
+  apt_key:
+    url: "{{ repokey_apache | default('https://www.apache.org/dist/cassandra/KEYS') }}"
+    state: present
+  when: install_version == "apache"
+
+- name: Add Apache repository (Apache)
+  apt_repository:
+    repo: "{{ repourl_apache | default('deb http://www.apache.org/dist/cassandra/debian 30x main') }}"
+    state: present
   when: install_version == "apache"
 
 - name: Add Oracle Java PPA repo
-  apt_repository: repo='ppa:webupd8team/java'
+  apt_repository:
+    repo: "{{ repourl_oracle_java | default('ppa:webupd8team/java') }}"
 
 - name: Accept Oracle license (1/2)
   shell: "echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections"
