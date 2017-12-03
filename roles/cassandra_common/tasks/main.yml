@@ -64,6 +64,17 @@
 
 - debug: var=seeds
 
+- name: Install apt_key dependencies
+  apt:
+    name: '{{ item }}'
+  with_items: [python-urllib3, python-openssl, python-pyasn1, python-pip]
+  when: ansible_distribution_release == 'trusty'
+
+- name: Install apt_key dependencies
+  pip:
+    name: ndg-httpsclient
+  when: ansible_distribution_release == 'trusty'
+
 - name: Add Datastax repository (DCE)
   apt_repository:
     repo: "{{ repourl_datastax_ce | default('deb http://debian.datastax.com/community stable main') }}"
