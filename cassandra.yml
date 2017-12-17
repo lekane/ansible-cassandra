@@ -37,7 +37,7 @@
 # ansible-playbook -i <inventory> --extra-vars="init_server=true" cassandra.yml 
 #
 # To replace node in existing cluster: 
-# ansible-playbook -i <inventory> --extra-vars="init_server=true replace_dead_server=true replace_address=<address>" cassandra.yml 
+# ansible-playbook -i <inventory> --extra-vars="init_server=true replace_dead_server=true replace_address=<address>" -l <node_to_replace> cassandra.yml 
 #
 # To update/upgrade nodes in existing cluster:
 # ansible-playbook -i <inventory> cassandra.yml 
