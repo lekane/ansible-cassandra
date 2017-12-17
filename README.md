@@ -1,11 +1,11 @@
 # ansible-cassandra
-Ansible provisioning/maintenance tasks for Cassandra. Can be used to install & manage upgrades for a DCE/DSE based Cassandra cluster, OpsCenter & Spark
+Ansible provisioning/maintenance tasks for Cassandra. Can be used to install & manage upgrades for an Apache Cassandra or Datastax (DCE or DSE+Opscenter) based Cassandra cluster & Spark
 
 Usage:
 
-1. Create the servers for Cassandra and Datastax OpsCenter
+1. Create the servers for Cassandra and other services (e.g Datastax OpsCenter, Spark master)
 2. Define an Ansible inventory (see inventory/example.hosts) for your environment
-3. Run the playbook to install Cassandra + Datastax OpsCenter
+3. Run the playbook to install Cassandra + other services
 
 Inventory configuration:
 
@@ -30,7 +30,8 @@ cassandra_nodes | s3_backup_secret_key | secret_key | - | S3 secret key
 opscenter_nodes | node_ip | true, false | - | IP for internal cluster communications
 --- | --- | --- | ---
 all_cassandra_nodes | deployment_environment | aws, euca | - | environment for installation
-all_cassandra_nodes | install_version | dce, dse | - | Cassandra to install (dce=Datastax Community Edition, dse=Datastax Enterprise Edition)
+all_cassandra_nodes | install_version | apache, dce, dse | - | Cassandra to install (apache=Apache Cassandra, dce=Datastax Community Edition, dse=Datastax Enterprise Edition)
+all_cassandra_nodes | ignore_shutdown_errors | true, false | false | Should we ignore errors with graceful node shutdown
 all_cassandra_nodes | dse_username | DSE username | - | DSE username (only for DSE install)
 all_cassandra_nodes | dse_password | DSE password | - | DSE password (only for DSE install)
 
@@ -45,3 +46,8 @@ Running:
 Spark setup:
 Typical way of setting up the environment would be to define 2 Cassandra data centers: one for real-time transactions (plain Cassandra) and
 another for analytics workloads (Cassandra with co-located Spark nodes). You can also use the playbook without installing Spark.
+
+Notes:
+- DCE to Apache Cassandra migration: As Datastax dropped support for DCE (3.0.9 is the last supported version), it is recommended you migrate to 
+Apache Cassandra based setup (or run DSE). The migration path we took in our clusters was an round-robin DCE->Apache migration (graceful shutdown of node, removal of DCE, running the playbook with default setup on the node (installs & configures Apache Cassandra and keeps the old node data)). You'll probably want to set
+ignore_shutdown_errors=true so that the playbook will run when the old binaries have been remove & service isn't running.
