@@ -73,7 +73,7 @@ chmod 777 /etc/fstab
 sed -i "/${DRIVE_SCHEME}b/d" /etc/fstab
 
 # Make raid appear on reboot
-echo "/dev/md0 /data ext4 noatime,nobootwait 0 0" | tee -a /etc/fstab
+echo "/dev/md0 /data ext4 noatime 0 0" | tee -a /etc/fstab
 
 # Update initramfs
 update-initramfs -u
