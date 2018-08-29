@@ -15,8 +15,8 @@
 
 spark.master                          spark://{{ spark_master_ip }}:7077
 spark.cassandra.connection.host       {{ spark_cassandra_connection_host }}
-spark.driver.extraClassPath           /opt/spark/spark-cassandra-connector/spark-cassandra-connector-assembly-{{ spark_connector_version }}.jar
-spark.executor.extraClassPath         /opt/spark/spark-cassandra-connector/spark-cassandra-connector-assembly-{{ spark_connector_version }}.jar
+spark.driver.extraClassPath           /opt/spark/spark-cassandra-connector/{{ spark_connector_name }}
+spark.executor.extraClassPath         /opt/spark/spark-cassandra-connector/{{ spark_connector_name }}
 
 spark.cassandra.connection.local_dc   {{ spark_datacenter }}
 

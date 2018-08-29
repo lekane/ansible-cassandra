@@ -1,18 +1,10 @@
-#spark_version: spark-1.2.2-bin-hadoop2.4
-##spark_version: spark-1.3.1-bin-hadoop2.6
-#spark_version: spark-1.4.0-bin-hadoop2.6
-spark_version: spark-1.5.1-bin-hadoop2.6
-#spark_version: spark-1.5.2-bin-hadoop2.6
-spark_url: http://d3kbcqa49mib13.cloudfront.net/{{ spark_version }}.tgz
 
-##spark_connector_version: 1.3.0-M2
-#spark_connector_version: 1.4.0-M1
-spark_connector_version: 1.5.0
+spark_version_main: spark-2.3.1
+spark_version: "{{ spark_version_main }}-bin-hadoop2.7"
+spark_url: "http://mirror.netinch.com/pub/apache/spark/{{ spark_version_main }}/{{ spark_version }}.tgz"
 
-worker_memory: 1024m
-driver_memory: 1024m
-executor_memory: 1024m
-executor_instances: 2
+spark_connector_name: spark-cassandra-connector_2.11-2.3.1.jar
+spark_connector_url: "http://central.maven.org/maven2/com/datastax/spark/spark-cassandra-connector_2.11/2.3.1/{{ spark_connector_name }}"
 
 spark_env:
   SPARK_CONF_DIR: /opt/spark/conf
@@ -20,10 +12,10 @@ spark_env:
   SPARK_PID_DIR: /opt/spark/pids
   SPARK_WORKER_DIR: /opt/spark/work
   SPARK_LOCAL_DIRS: /opt/spark/tmp
-  SPARK_EXECUTOR_INSTANCES: "{{ executor_instances }}"
-  SPARK_WORKER_CORES: 1
-  SPARK_WORKER_MEMORY: "{{ worker_memory }}"
-  SPARK_DRIVER_MEMORY: "{{ driver_memory }}"
+  SPARK_EXECUTOR_INSTANCES: "{{ executor_instances | default(1) }}"
+  SPARK_WORKER_CORES: "{{ worker_cores | default(1) }}"
+  SPARK_WORKER_MEMORY: "{{ worker_memory | default('1g') }}"
+  SPARK_DRIVER_MEMORY: "{{ driver_memory | default('1g') }}"
   SPARK_REPL_MEM: 512m
   SPARK_WORKER_PORT: 9000
   SPARK_MASTER_OPTS: $LOG4J -Dspark.log.file=/opt/spark/logs/master.log
@@ -33,7 +25,8 @@ spark_env:
   SPARK_APP_OPTS: -Djava.io.tmpdir=/opt/spark/tmp/app/\$USER 
 
 spark_defaults:
-#  spark.serializer: org.apache.spark.serializer.KryoSerializer
-#  spark.cores.max: 
+  #spark.serializer: org.apache.spark.serializer.KryoSerializer
+  #spark.cores.max: 
   spark.executor.memory:  "{{ executor_memory }}"
-  spark.cassandra.input.consistency.level: LOCAL_QUORUM
+  #spark.cassandra.input.consistency.level: LOCAL_QUORUM
+  spark.cassandra.input.consistency.level: ONE
