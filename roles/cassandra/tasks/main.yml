@@ -31,3 +31,4 @@
   when: "{{ restart_cassandra | default(true) }} == true"
 
 - include: s3_backup.yml
+  when: "{{ s3_backup_enabled | default(false) }} == true"
