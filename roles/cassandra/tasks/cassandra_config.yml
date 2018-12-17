@@ -59,19 +59,27 @@
 #  file: path=/data state=directory owner=root group=root mode=0777
 #  when: "{{ init_server | default(false) }} == true and deployment_environment == 'openstack'"
 
+- name: Confirm JXM state
+  shell: "grep 'LOCAL_JMX=' /etc/cassandra/cassandra-env.sh | cut -d'=' -f2"
+  register: jmx_state
+
+- name: Set current_nodetool_auth 
+  set_fact: current_nodetool_auth="-u admin -pw {{ admin_jmx_remote_password }}"
+  when: jmx_state.stdout == "no"
+
 - name: Stop Cassandra DCE
   when: "{{ init_server | default(false) }} == false and install_version == 'dce' and cassandra_config_dir_state.stat.exists == true"
-  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
+  shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Stop Cassandra DSE
   when: "{{ init_server | default(false) }} == false and install_version == 'dse' and cassandra_config_dir_state.stat.exists == true"
-  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service dse stop"
+  shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service dse stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Stop Cassandra Apache
   when: "{{ init_server | default(false) }} == false and install_version == 'apache' and cassandra_config_dir_state.stat.exists == true"
-  shell: "nodetool disablethrift && nodetool disablebinary && nodetool disablegossip && nodetool drain && service cassandra stop"
+  shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Check Cassandra system.log existence
@@ -185,6 +193,12 @@
 
 - name: Template jvm.options
   template: "src=jvm.options.j2 dest={{ cassandra_config_dir }}/jvm.options mode=0664"
+
+- name: Template jmxremote.password
+  template: "src=jmxremote.password.j2 dest={{ cassandra_config_dir }}/jmxremote.password mode=0400 owner=cassandra group=cassandra"
+
+- name: Template jmxremote.access
+  template: "src=jmxremote.access.j2 dest={{ cassandra_config_dir }}/jmxremote.access mode=0400 owner=cassandra group=cassandra"
 
 - name: Enable performance tweaks
   script: performance_tweaks.sh

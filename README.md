@@ -26,6 +26,9 @@ cassandra_nodes | s3_backup_bucket | bucket | - | S3 bucket where to store backu
 cassandra_nodes | s3_backup_keyspaces | keyspace,keyspace,... | - | Cassandra keyspaces to backup (comma separated)
 cassandra_nodes | s3_backup_access_key | access_key | - | S3 access key
 cassandra_nodes | s3_backup_secret_key | secret_key | - | S3 secret key
+cassandra_nodes | local_jmx | yes, no | yes | JMX local only
+cassandra_nodes | admin_jmx_remote_password| password | - | JMX password for admin (readwrite)
+cassandra_nodes | monitoring_jmx_remote_password | password| - | JMX password for monitoring (readonly)
 --- | --- | --- | ---
 opscenter_nodes | node_ip | true, false | - | IP for internal cluster communications
 --- | --- | --- | ---
