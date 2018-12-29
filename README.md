@@ -32,6 +32,8 @@ cassandra_nodes | monitoring_jmx_remote_password | password| - | JMX password fo
 --- | --- | --- | ---
 opscenter_nodes | node_ip | true, false | - | IP for internal cluster communications
 --- | --- | --- | ---
+all_cassandra_nodes | data_disk_environment | ephemeral_raid, directory_symlink, create_data_directory | ephemeral_raid | data disk options
+all_cassandra_nodes | data_disk_symlink | symlink name | - | name of symlink when using "directory_symlink" data_disk_environment
 all_cassandra_nodes | deployment_environment | aws, euca | - | environment for installation
 all_cassandra_nodes | install_version | apache, dce, dse | - | Cassandra to install (apache=Apache Cassandra, dce=Datastax Community Edition, dse=Datastax Enterprise Edition)
 all_cassandra_nodes | ignore_shutdown_errors | true, false | false | Should we ignore errors with graceful node shutdown
@@ -45,6 +47,13 @@ Requirements:
 
 Running:
 - Check out main cassandra.yml comments for typical running options (e.g. new install, upgrade, cron/backup only updates etc)
+
+Data disk environment options:
+Deployment data options are controlled by the required "data_disk_environment" environment variable, which can be set for all nodes or per-node basis.
+The supported environments are:
+- ephemeral_raid: Creates a RAID-0 array for local ephemeral drives. Works also for a single ephemeral drive. (default)
+- directory_symlink: Creates a symlink from /ephemeral to "data_disk_symlink".
+- create_data_directory: Creates /data directory on root device.
 
 Spark setup:
 Typical way of setting up the environment would be to define 2 Cassandra data centers: one for real-time transactions (plain Cassandra) and

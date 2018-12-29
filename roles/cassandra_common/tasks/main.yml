@@ -122,6 +122,7 @@
 
 - name: Install python-software-properties package
   apt: pkg=python-software-properties state=present
+  when: ansible_distribution == 'Ubuntu' and ( ansible_distribution_release == 'trusty' or ansible_distribution_release == 'xenial' )
 
 - name: Install python-setuptools package
   apt: pkg=python-setuptools state=present

@@ -43,21 +43,17 @@
   stat: path={{ cassandra_config_dir }}
   register: cassandra_config_dir_state
 
-- name: Create RAID-0 from ephemeral drives
+- name: Create RAID-0 from ephemeral drives for data 
   script: "raid_ephemeral.sh {{ deployment_environment }}"
-  when: "{{ init_server | default(false) }} == true and deployment_environment == 'aws'"
+  when: "{{ init_server | default(false) }} == true and data_disk_environment == 'ephemeral_raid'"
 
-- name: Symlink /ephemeral to /data
-  file: src=/ephemeral dest=/data state=link
-  when: "{{ init_server | default(false) }} == true and deployment_environment == 'euca'"
+- name: Symlink 'data_disk_symlink' to /data for data
+  file: "src={{ data_disk_symlink }} dest=/data state=link"
+  when: "{{ init_server | default(false) }} == true and data_disk_environment == 'directory_symlink'"
 
-- name: Symlink /ephemeral to /data
-  file: src=/ephemeral dest=/data state=link
-  when: "{{ init_server | default(false) }} == true and deployment_environment == 'openstack'"
-
-#- name: Create /data directory
-#  file: path=/data state=directory owner=root group=root mode=0777
-#  when: "{{ init_server | default(false) }} == true and deployment_environment == 'openstack'"
+- name: Create /data directory to root device for data
+  file: path=/data state=directory owner=root group=root mode=0777
+  when: "{{ init_server | default(false) }} == true and data_disk_environment == 'create_data_directory'"
 
 - name: Confirm JXM state
   shell: "grep 'LOCAL_JMX=' /etc/cassandra/cassandra-env.sh | cut -d'=' -f2"
