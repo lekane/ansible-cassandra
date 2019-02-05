@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - name: Get EC2 Facts
-  action: ec2_facts
+  action: ec2_metadata_facts
 
 - name: Set default private IP to node_ip
   set_fact: private_ip="{{ node_ip }}"
