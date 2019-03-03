@@ -29,20 +29,21 @@
 
 - name: Get EC2 Facts
   action: ec2_metadata_facts
+  when: deployment_environment == "aws"
 
 - name: Set default private IP to node_ip
   set_fact: private_ip="{{ node_ip }}"
 
-- name: Set private IP fact (EUCA/OpenStack)
-  set_fact: private_ip="{{ ansible_ec2_local_ipv4 }}"
-  when: deployment_environment == "euca" or deployment_environment == "openstack"
+- name: Set private IP fact (OpenStack)
+  set_fact: private_ip="{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}"
+  when: deployment_environment == "openstack"
 
-- name: Set private hostname fact (EUCA/OpenStack)
-  set_fact: private_hostname="{{ ansible_ec2_local_hostname }}"
-  when: deployment_environment == "euca" or deployment_environment == "openstack"
+- name: Set private hostname fact (OpenStack)
+  set_fact: private_hostname="{{ ansible_all_ipv4_addresses | ipaddr('private') | first }}"
+  when: deployment_environment == "openstack"
 
 - name: Set private IP fact (AWS)
-  set_fact: private_ip="{{ ansible_default_ipv4.address  }}"
+  set_fact: private_ip="{{ ansible_default_ipv4.address }}"
   when: deployment_environment == "aws"
 
 - name: Set private hostname fact (AWS)
