@@ -108,15 +108,9 @@
     state: present
   when: install_version == "apache"
 
-- name: Add Oracle Java PPA repo
+- name: Add OpenJDK Java PPA repo
   apt_repository:
-    repo: "{{ repourl_oracle_java | default('ppa:webupd8team/java') }}"
-
-- name: Accept Oracle license (1/2)
-  shell: "echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections"
-
-- name: Accept Oracle license (2/2)
-  shell: "echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections"
+    repo: "{{ repourl_openjdk_java | default('ppa:openjdk-r/ppa') }}"
 
 - name: Update APT cache
   apt: update_cache=true
@@ -128,5 +122,5 @@
 - name: Install python-setuptools package
   apt: pkg=python-setuptools state=present
 
-- name: Install Oracle Java
-  apt: name=oracle-java8-installer state=latest
+- name: Install OpenJDK Java
+  apt: name=openjdk-8-jdk state=latest
