@@ -41,6 +41,6 @@ echo "root - as unlimited" >> /etc/security/limits.conf
 echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
 echo "vm.overcommit_memory = 1" >> /etc/sysctl.conf
 echo "vm.zone_reclaim_mode = 0" >> /etc/sysctl.conf
-echo "vm.max_map_count = 131072" >> /etc/sysctl.conf
+echo "vm.max_map_count = 1048575" >> /etc/sysctl.conf
 
 sysctl -p
