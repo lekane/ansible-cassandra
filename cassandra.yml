@@ -30,11 +30,11 @@
 # Create/configure Cassandra cluster & OpsCenter
 # ==============================================
 #
-# To create node for new empty cluster: 
+# To create nodes for new empty cluster: 
 # ansible-playbook -i <inventory> --extra-vars="init_server=true empty_cluster=true" cassandra.yml 
 #
 # To create node for existing cluster: 
-# ansible-playbook -i <inventory> --extra-vars="init_server=true" cassandra.yml 
+# ansible-playbook -i <inventory> --extra-vars="init_server=true" -l <node_to_add> cassandra.yml 
 #
 # To replace node in existing cluster: 
 # ansible-playbook -i <inventory> --extra-vars="init_server=true replace_dead_server=true replace_address=<address>" -l <node_to_replace> cassandra.yml 
@@ -42,7 +42,7 @@
 # To update/upgrade nodes in existing cluster:
 # ansible-playbook -i <inventory> cassandra.yml 
 #
-# To update/upgrade node extra config (backup, cron etc) without configuring & restarting main Cassandra service in existing cluster:
+# To update/upgrade nodes extra config (backup, cron etc) without configuring & restarting main Cassandra service in existing cluster:
 # ansible-playbook -i <inventory> --extra-vars="restart_cassandra=false" cassandra.yml 
 #
 # To target specific node/nodes, add -l node1[:node2][:nodeN]
