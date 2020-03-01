@@ -31,10 +31,11 @@
   set_fact: spark_master_node={{ groups[['spark_master_nodes'][0]][0] }}
 - name:  Set spark_master ip fact
   set_fact: spark_master_ip="{{ hostvars[spark_master_node].spark_master_ip }}"
-- debug: var=spark_master_ip
+- debug: 
+    var: spark_master_ip
 - name: Create spark ssh key
   local_action: command ssh-keygen -t rsa -P '' -f /tmp/spark_ssh creates=/tmp/spark_ssh
-  sudo: no
+  become: false
   run_once: True
 - name: Create spark group
   group: name=spark state=present
