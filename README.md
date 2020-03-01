@@ -52,7 +52,7 @@ Data disk environment options:
 Deployment data options are controlled by the required "data_disk_environment" environment variable, which can be set for all nodes or per-node basis.
 The supported environments are:
 - ephemeral_raid: Creates a RAID-0 array for local ephemeral drives. Works also for a single ephemeral drive. (default)
-- directory_symlink: Creates a symlink from /ephemeral to "data_disk_symlink".
+- directory_symlink: Creates a symlink from "data_disk_symlink" to /data.
 - create_data_directory: Creates /data directory on root device.
 
 Spark setup:
