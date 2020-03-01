@@ -238,10 +238,10 @@
   when: "{{ empty_cluster | default(false) }} == true"
   command: "sed -i -e '/auto_boostrap/s/auto_boostrap/#auto_boostrap/' {{ cassandra_config_dir }}/cassandra.yaml"
 
-- name: Extract tokens & update cassandra.yaml
-  script: token_store.sh
-  when: "{{ init_server | default(false) }} == true"
+#- name: Extract tokens & update cassandra.yaml
+#  script: token_store.sh
+#  when: "{{ init_server | default(false) }} == true"
 
-- name: Copy tokens from node
-  fetch: "src={{ cassandra_config_dir }}/TOKENS dest=inventory/tokens/{{ ansible_hostname }}.token flat=yes"
-  when: "{{ init_server | default(false) }} == true"
+#- name: Copy tokens from node
+#  fetch: "src={{ cassandra_config_dir }}/TOKENS dest=inventory/tokens/{{ ansible_hostname }}.token flat=yes"
+#  when: "{{ init_server | default(false) }} == true"
