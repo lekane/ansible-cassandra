@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - include: cassandra_config.yml
-  when: "{{ restart_cassandra | default(true) }} == true"
+  when: restart_cassandra | default(true)
 
 - include: s3_backup.yml
-  when: "{{ s3_backup_enabled | default(false) }} == true"
+  when: s3_backup_enabled | default(false)

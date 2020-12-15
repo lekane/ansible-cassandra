@@ -45,15 +45,15 @@
 
 - name: Create RAID-0 from ephemeral drives for data 
   script: "raid_ephemeral.sh {{ deployment_environment }}"
-  when: "{{ init_server | default(false) }} == true and data_disk_environment == 'ephemeral_raid'"
+  when: init_server | default(false) and data_disk_environment == 'ephemeral_raid'
 
 - name: Symlink 'data_disk_symlink' to /data for data
   file: "src={{ data_disk_symlink }} dest=/data state=link"
-  when: "{{ init_server | default(false) }} == true and data_disk_environment == 'directory_symlink'"
+  when: init_server | default(false) and data_disk_environment == 'directory_symlink'
 
 - name: Create /data directory to root device for data
   file: path=/data state=directory owner=root group=root mode=0777
-  when: "{{ init_server | default(false) }} == true and data_disk_environment == 'create_data_directory'"
+  when: init_server | default(false) and data_disk_environment == 'create_data_directory'
 
 - name: Confirm JXM state
   shell: "grep 'LOCAL_JMX=' /etc/cassandra/cassandra-env.sh | cut -d'=' -f2"
@@ -64,17 +64,17 @@
   when: jmx_state.stdout == "no"
 
 - name: Stop Cassandra DCE
-  when: "{{ init_server | default(false) }} == false and install_version == 'dce' and cassandra_config_dir_state.stat.exists == true"
+  when: init_server | default(false) and install_version == 'dce' and cassandra_config_dir_state.stat.exists == true
   shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Stop Cassandra DSE
-  when: "{{ init_server | default(false) }} == false and install_version == 'dse' and cassandra_config_dir_state.stat.exists == true"
+  when: init_server | default(false) and install_version == 'dse' and cassandra_config_dir_state.stat.exists == true
   shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service dse stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Stop Cassandra Apache
-  when: "{{ init_server | default(false) }} == false and install_version == 'apache' and cassandra_config_dir_state.stat.exists == true"
+  when: init_server | default(false) and install_version == 'apache' and cassandra_config_dir_state.stat.exists == true
   shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
@@ -88,26 +88,27 @@
 
 - name: Install Datastax Community Cassandra & tools
   when: install_version == "dce"
-  apt: pkg={{item}} state=present
+  apt:
+    name:
+      - dsc30={{ dsc_version }}
+      - cassandra={{ cassandra_version }}
+      - cassandra-tools={{ cassandra_tools_version }}
+    state: present
   register: cassandra_installed_dce
-  with_items:
-  - dsc30={{ dsc_version }}
-  - cassandra={{ cassandra_version }}
-  - cassandra-tools={{ cassandra_tools_version }}
 
 - name: Install Datastax Enterprise Cassandra
   when: install_version == "dse"
   register: cassandra_installed_dse
-  apt: pkg={{item}} state=present
-  with_items:
-  - dse-full={{ dse_version }}
+  apt:
+    name: dse-full={{ dse_version }}
+    state: present
 
 - name: Install Apache Cassandra
   when: install_version == "apache"
-  apt: pkg={{item}} state=present
+  apt:
+    name: cassandra={{ cassandra_version }}
+    state: present
   register: cassandra_installed_apache
-  with_items:
-  - cassandra={{ cassandra_version }}
 
 - name: get cassandra_installed variable (DCE)
   set_fact: cassandra_installed="{{ cassandra_installed_dce.changed }}"
@@ -119,23 +120,23 @@
   set_fact: cassandra_installed="{{ cassandra_installed_apache.changed }}"
 
 - name: Wait for server autostart
-  when: "{{ init_server | default(false) }} == true and {{ cassandra_installed }} == true"
+  when: init_server | default(false) and cassandra_installed == true
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients"
 
 - name: Stop Cassandra DCE (autostarted on install)
-  when: "{{ init_server | default(false) }} == true and install_version == 'dce'"
+  when: init_server | default(false) and install_version == 'dce'
   service: name=cassandra state=stopped
 
 - name: Stop Cassandra DSE (autostarted on install)
-  when: "{{ init_server | default(false) }} == true and install_version == 'dse'"
+  when: init_server | default(false) and install_version == 'dse'
   service: name=dse state=stopped
 
 - name: Stop Cassandra Apache (autostarted on install)
-  when: "{{ init_server | default(false) }} == true and install_version == 'apache'"
+  when: init_server | default(false) and install_version == 'apache'
   service: name=cassandra state=stopped
 
 - name: Clear Cassandra logs (after autostart)
-  when: "{{ init_server | default(false) }} == true"
+  when: init_server | default(false)
   shell: echo > /var/log/cassandra/system.log
 
 - name: Cassandra system.log ownership check
@@ -143,7 +144,7 @@
 
 - name: Remove cluster metadata
   shell: rm -rf /var/lib/cassandra/*
-  when: "{{ init_server | default(false) }} == true"
+  when: init_server | default(false)
 
 - name: Create data directory
   file: path=/data/cassandra/data state=directory owner=cassandra group=cassandra mode=0755
@@ -200,11 +201,11 @@
   script: performance_tweaks.sh
 
 - name: Enable config to replace existing dead node
-  when: "{{ replace_dead_server | default(false) }} == true"
+  when: replace_dead_server | default(false)
   command: "sed -i -e '/cassandra.replace_address/s/#JVM_OPTS/JVM_OPTS/' {{ cassandra_config_dir }}/cassandra-env.sh"
 
 - name: Disable auto_bootstrap for empty cluster
-  when: "{{ empty_cluster | default(false) }} == true"
+  when: empty_cluster | default(false)
   command: "sed -i -e '/#auto_boostrap/s/#auto_boostrap/auto_boostrap/' {{ cassandra_config_dir }}/cassandra.yaml"
 
 - include: dse_config.yml
@@ -224,18 +225,18 @@
 
 - name: Wait for Cassandra startup (bootstrapping)
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients" timeout=900
-  when: "{{ init_server | default(false) }} == false"
+  when: init_server | default(false)
 
 - name: Wait for Cassandra startup (not bootstrapping)
   pause: seconds=180
-  when: "{{ init_server | default(false) }} == true"
+  when: init_server | default(false)
 
 - name: Disable config to replace existing dead node
-  when: "{{ replace_dead_server | default(false) }} == true"
+  when: replace_dead_server | default(false)
   command: "sed -i -e '/cassandra.replace_address/s/JVM_OPTS=/#JVM_OPTS=/' {{ cassandra_config_dir }}/cassandra-env.sh"
 
 - name: Re-enable auto_bootstrap for empty cluster
-  when: "{{ empty_cluster | default(false) }} == true"
+  when: empty_cluster | default(false)
   command: "sed -i -e '/auto_boostrap/s/auto_boostrap/#auto_boostrap/' {{ cassandra_config_dir }}/cassandra.yaml"
 
 #- name: Extract tokens & update cassandra.yaml
