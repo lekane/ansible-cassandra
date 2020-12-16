@@ -224,7 +224,7 @@
   service: name=cassandra state=restarted
 
 - name: Wait for Cassandra startup (bootstrapping)
-  wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients" timeout=900
+  wait_for: path=/var/log/cassandra/system.log search_regex="Starting to bootstrap" timeout=600
   when: init_server | default(false)
 
 - name: Wait for Cassandra startup (not bootstrapping)
