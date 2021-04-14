@@ -50,6 +50,7 @@
   set_fact: private_hostname="{{ ansible_hostname }}"
   when: deployment_environment == "aws"
 
+- debug: var=proxy_env
 - debug: var=private_ip
 - debug: var=private_hostname
 
