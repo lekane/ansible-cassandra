@@ -225,11 +225,11 @@
 
 - name: Wait for Cassandra startup (bootstrapping)
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting to bootstrap" timeout=600
-  when: init_server | default(false)
+  when: "{{ init_server | default(false) }} == false"
 
 - name: Wait for Cassandra startup (not bootstrapping)
   pause: seconds=180
-  when: init_server | default(false)
+  when: "{{ init_server | default(false) }} == true"
 
 - name: Disable config to replace existing dead node
   when: replace_dead_server | default(false)
