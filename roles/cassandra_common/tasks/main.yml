@@ -66,6 +66,14 @@
 
 - debug: var=seeds
 
+- name: Update APT cache
+  apt: update_cache=true
+
+- name: Install common dependencies
+  apt:
+    name: ['ca-certificates']
+  when: ansible_distribution_release == 'trusty'
+
 - name: Install apt_key dependencies
   apt:
     name: ['python-urllib3', 'python-openssl', 'python-pyasn1', 'python-pip']
@@ -104,7 +112,7 @@
 
 - name: Add Apache repository (Apache)
   apt_repository:
-    repo: "{{ repourl_apache | default('deb http://www.apache.org/dist/cassandra/debian 30x main') }}"
+    repo: "{{ repourl_apache | default('deb https://downloads.apache.org/cassandra/debian 30x main') }}"
     state: present
   when: install_version == "apache"
 
