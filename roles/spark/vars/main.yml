@@ -1,10 +1,10 @@
 
 spark_version_main: spark-2.3.1
 spark_version: "{{ spark_version_main }}-bin-hadoop2.7"
-spark_url: "http://mirror.netinch.com/pub/apache/spark/{{ spark_version_main }}/{{ spark_version }}.tgz"
+spark_url: "https://archive.apache.org/dist/spark/{{ spark_version_main }}/{{ spark_version }}.tgz"
 
 spark_connector_name: spark-cassandra-connector_2.11-2.3.1.jar
-spark_connector_url: "http://central.maven.org/maven2/com/datastax/spark/spark-cassandra-connector_2.11/2.3.1/{{ spark_connector_name }}"
+spark_connector_url: "https://repo.maven.apache.org/maven2/com/datastax/spark/spark-cassandra-connector_2.11/2.3.1/{{ spark_connector_name }}"
 
 spark_env:
   SPARK_CONF_DIR: /opt/spark/conf
