@@ -30,5 +30,5 @@
 - include: cassandra_config.yml
   when: restart_cassandra | default(true)
 
-- include: s3_backup.yml
-  when: s3_backup_enabled | default(false)
+#- include: s3_backup.yml
+#  when: s3_backup_enabled | default(false)
