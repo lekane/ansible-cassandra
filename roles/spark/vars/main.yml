@@ -6,6 +6,9 @@ spark_url: "https://archive.apache.org/dist/spark/{{ spark_version_main }}/{{ sp
 spark_connector_name: spark-cassandra-connector_2.11-2.3.1.jar
 spark_connector_url: "https://repo.maven.apache.org/maven2/com/datastax/spark/spark-cassandra-connector_2.11/2.3.1/{{ spark_connector_name }}"
 
+aws_sdk_jar_url: "https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar"
+aws_hadoop_jar_url: "https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar"
+
 spark_env:
   SPARK_CONF_DIR: /opt/spark/conf
   SPARK_LOG_DIR: /opt/spark/logs

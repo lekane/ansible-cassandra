@@ -19,6 +19,7 @@ cassandra_nodes | repair_start_minute | 00-59 | 0 | minute to start cron based r
 cassandra_nodes | seed | true, false | - | is the node a seed
 cassandra_nodes | node_ip | true, false | - | IP for internal cluster communications
 cassandra_nodes | spark_enabled | true, false | false | enable Spark on node (DSE only)
+cassandra_nodes | aws_jars | true, false | false | download jars for aws sdk and hadoop ( required for writing to s3 directly from spark)
 cassandra_nodes | s3_backup_enabled | true, false | false | enable S3 backups
 cassandra_nodes | s3_backup_environment | aws, riakcs | - | environment for S3 backups
 cassandra_nodes | s3_backup_host| host | - | S3 host (for non-AWS)

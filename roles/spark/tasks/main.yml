@@ -92,6 +92,12 @@
   file: path=/opt/spark/spark-cassandra-connector state=directory owner=spark group=spark mode=0775
 - name: Download Spark Connector
   get_url: url={{ spark_connector_url }} dest=/opt/spark/spark-cassandra-connector/{{ spark_connector_name }} validate_certs=no
+- name: Download spark aws sdk jar
+  get_url: url={{ aws_sdk_jar_url }} dest=/opt/spark/jars/ validate_certs=no
+  when: aws_jars|default(false)|bool == true
+- name: Download spark hadoop aws jar
+  get_url: url={{ aws_hadoop_jar_url }} dest=/opt/spark/jars/ validate_certs=no
+  when: aws_jars|default(false)|bool == true
 - name: Copy spark-shell-init.spark
   copy: src=spark-shell-init.spark dest=/opt/spark/spark-shell-init.spark owner=spark group=spark mode=0644
 - name: Configure all Spark directory permissions
