@@ -106,13 +106,13 @@
 
 - name: Add Apache repository key
   apt_key:
-    url: "{{ repokey_apache | default('https://www.apache.org/dist/cassandra/KEYS') }}"
+    url: "{{ repokey_apache | default('https://downloads.apache.org/cassandra/KEYS') }}"
     state: present
   when: install_version == "apache"
 
 - name: Add Apache repository (Apache)
   apt_repository:
-    repo: "{{ repourl_apache | default('deb https://downloads.apache.org/cassandra/debian 30x main') }}"
+    repo: "{{ repourl_apache | default('deb https://debian.cassandra.apache.org 30x main') }}"
     state: present
   when: install_version == "apache"
 
