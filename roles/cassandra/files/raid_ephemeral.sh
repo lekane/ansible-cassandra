@@ -8,7 +8,10 @@
 # Beware, This script is NOT fully idempotent.
 #
 
-METADATA_URL_BASE="http://169.254.169.254/2012-01-12"
+#METADATA_URL_BASE="http://169.254.169.254/2012-01-12"
+METADATA_URL_BASE="curl -H \"X-aws-ec2-metadata-token: $TOKEN\" http://169.254.169.254/latest/"
+TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
+
 CLOUD_PROVIDER="$1"
 
 root_drive=`df -h | grep -v grep | awk 'NR==2{print $1}'`

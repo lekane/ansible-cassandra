@@ -27,6 +27,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# ubuntu22 version umount doesn't properly remove the pre-existing moutn which fails the raid0 setup
+# we remove the entry from fstab in the instance userdata phase and reboot here to be sure it will be unmounted
+- name: Wait for server to restart
+  reboot:
+    reboot_timeout: 3600
+  when: init_server | default(false) and data_disk_environment == 'ephemeral_raid'
+
 - name: Set cassandra_config_dir fact (DCE)
   when: install_version == "dce"
   set_fact: cassandra_config_dir=/etc/cassandra
@@ -208,7 +215,7 @@
   when: empty_cluster | default(false)
   command: "sed -i -e '/#auto_boostrap/s/#auto_boostrap/auto_boostrap/' {{ cassandra_config_dir }}/cassandra.yaml"
 
-- include: dse_config.yml
+- import_tasks: dse_config.yml
   when: install_version == "dse"
 
 - name: Cassandra DCE startup
