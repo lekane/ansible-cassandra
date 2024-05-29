@@ -31,7 +31,8 @@ Inventory configuration:
  cassandra_nodes     | local_jmx                      | yes, no                                                  | yes            | JMX local only                                                                                                  
  cassandra_nodes     | admin_jmx_remote_password      | password                                                 | -              | JMX password for admin (readwrite)                                                                              
  cassandra_nodes     | monitoring_jmx_remote_password | password                                                 | -              | JMX password for monitoring (readonly)                                                                          
- ---                 | ---                            | ---                                                      | ---            
+ cassandra_nodes     | unauthorized_jmx               | yes, no                                                  | no             | allow unauthorized access, careful with this one! local_jmx=no and unauthorized_jmx=no will require password for local connections as well
+---                 | ---                            | ---                                                      | ---            
  opscenter_nodes     | node_ip                        | true, false                                              | -              | IP for internal cluster communications                                                                          
  ---                 | ---                            | ---                                                      | ---            
  all_cassandra_nodes | data_disk_environment          | ephemeral_raid, directory_symlink, create_data_directory | ephemeral_raid | data disk options                                                                                               
@@ -42,7 +43,7 @@ Inventory configuration:
  all_cassandra_nodes | dse_username                   | DSE username                                             | -              | DSE username (only for DSE install)                                                                             
  all_cassandra_nodes | dse_password                   | DSE password                                             | -              | DSE password (only for DSE install)                                                                             
  all_spark_nodes     | common_ssh_key                 | public ssh key                                           | -              | add a common pre-existing ssh key for easier node management                                                    
- all_spark_nodes     | nfs_mount                      | true, false                                              | -              | is there an NFS mount to add to the spark instances                                                             
+ all_spark_nodes     | nfs_mount                      | true, false                                              | false          | is there an NFS mount to add to the spark instances                                                             
  all_spark_nodes     | nfs_mount_target               | nfs mount target address:/dir                            | -              | nfs mount target, ie: 192.168.1.66:/shared_data                                                                 
  all_spark_nodes     | nfs_sharedisc_dir              | mount local directory name                               | -              | local directory to use fo nfs mount, ie: shared_disc                                                            
 
