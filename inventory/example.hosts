@@ -27,18 +27,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [plain_cassandra_nodes]
-<CASSANDRA_NODE1> node_ip=<CASSANDRA_NODE1_IP> repair_weekday=MON,THU seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE2> node_ip=<CASSANDRA_NODE2_IP> repair_weekday=TUE,FRI seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> repair_weekday=WED,SAT seed=true dc=DC1 rack=RAC1
-<CASSANDRA_NODE4> node_ip=<CASSANDRA_NODE4_IP> repair_weekday=THU,SUN seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE1> node_ip=<CASSANDRA_NODE1_IP> seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE2> node_ip=<CASSANDRA_NODE2_IP> seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE3> node_ip=<CASSANDRA_NODE3_IP> seed=true dc=DC1 rack=RAC1
+<CASSANDRA_NODE4> node_ip=<CASSANDRA_NODE4_IP> seed=true dc=DC1 rack=RAC1
 
 [plain_cassandra_nodes:vars]
 spark_enabled=false
 
 [spark_nodes]
-<SPARK_NODE1> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> repair_weekday=MON,THU seed=true dc=DC2 rack=RAC1
-<SPARK_NODE2> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> repair_weekday=TUE,FRI seed=true dc=DC2 rack=RAC1
-<SPARK_NODE3> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> repair_weekday=WED,SAT seed=false dc=DC2 rack=RAC1
+<SPARK_NODE1> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> seed=true dc=DC2 rack=RAC1
+<SPARK_NODE2> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> seed=true dc=DC2 rack=RAC1
+<SPARK_NODE3> node_ip=<NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> seed=false dc=DC2 rack=RAC1
 
 [cassandra_nodes:children]
 plain_cassandra_nodes
@@ -52,9 +52,6 @@ s3_backup_bucket=<bucket>
 s3_backup_keyspaces=<keyspace>
 s3_backup_access_key=<access_key>
 s3_backup_secret_key=<secret_key>
-repair_start_hour=02
-repair_start_minute=0
-cron_repair_enabled=true
 ignore_shutdown_errors=false
 
 [opscenter_nodes]
