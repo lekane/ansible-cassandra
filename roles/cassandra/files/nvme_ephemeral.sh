@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ ! -d /data]]; then
+if [[ ! -d "/data" ]] ; then
   mkdir /data
   mkfs.ext4 -m 0 /dev/nvme1n1
   mount -t ext4 -o noatime /dev/nvme1n1 /data
