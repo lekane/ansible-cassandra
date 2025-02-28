@@ -236,7 +236,7 @@
 
 - name: Wait for Cassandra startup (bootstrapping)
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting to bootstrap" timeout=600
-  when: init_server is defined and init_server|bool
+  when: init_server is defined and init_server|bool and empty_cluster is not defined
 
 - name: Wait for Cassandra startup (not bootstrapping)
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients" timeout=300
