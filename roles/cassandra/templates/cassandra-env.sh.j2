@@ -262,7 +262,6 @@ JVM_OPTS="$JVM_OPTS -Djava.net.preferIPv4Stack=true"
 # jmx: metrics and administration interface
 #
 # add this if you're having trouble connecting:
-#JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname={{ hostvars[inventory_hostname]['ansible_eth0']['ipv4']['address'] }}"
 JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname={{ node_ip }}"
 #
 # see

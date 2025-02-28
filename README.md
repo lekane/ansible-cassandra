@@ -32,7 +32,7 @@ Inventory configuration:
 ---                 | ---                            | ---                                                      | ---            
  opscenter_nodes     | node_ip                        | true, false                                              | -              | IP for internal cluster communications                                                                          
  ---                 | ---                            | ---                                                      | ---            
- all_cassandra_nodes | data_disk_environment          | ephemeral_raid, directory_symlink, create_data_directory | ephemeral_raid | data disk options                                                                                               
+ all_cassandra_nodes | data_disk_environment          | ephemeral_raid, directory_symlink, create_data_directory,ephemeral_nvme | ephemeral_raid | data disk options                                                                                               
  all_cassandra_nodes | data_disk_symlink              | symlink name                                             | -              | name of symlink when using "directory_symlink" data_disk_environment                                            
  all_cassandra_nodes | deployment_environment         | aws, euca                                                | -              | environment for installation                                                                                    
  all_cassandra_nodes | install_version                | apache, dce, dse                                         | -              | Cassandra to install (apache=Apache Cassandra, dce=Datastax Community Edition, dse=Datastax Enterprise Edition) 
