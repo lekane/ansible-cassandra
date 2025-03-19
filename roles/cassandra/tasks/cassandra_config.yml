@@ -98,7 +98,7 @@
   shell: echo > /var/log/cassandra/system.log
 
 - name: Install Datastax Community Cassandra & tools
-  when: install_version == "dce"
+  when: install_version == "dce" and run_updates|default(true)|bool == true
   apt:
     name:
       - dsc30={{ dsc_version }}
@@ -108,14 +108,14 @@
   register: cassandra_installed_dce
 
 - name: Install Datastax Enterprise Cassandra
-  when: install_version == "dse"
+  when: install_version == "dse" and run_updates|default(true)|bool == true
   register: cassandra_installed_dse
   apt:
     name: dse-full={{ dse_version }}
     state: present
 
 - name: Install Apache Cassandra
-  when: install_version == "apache"
+  when: install_version == "apache" and run_updates|default(true)|bool == true
   apt:
     name: cassandra={{ cassandra_version }}
     state: present
