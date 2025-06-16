@@ -708,7 +708,7 @@ sstable_preemptive_open_interval_in_mb: 50
 # mostly sequential IO when streaming data during bootstrap or repair, which
 # can lead to saturating the network connection and degrading rpc performance.
 # When unset, the default is 200 Mbps or 25 MB/s.
-# stream_throughput_outbound_megabits_per_sec: 200
+stream_throughput_outbound_megabits_per_sec: {{ stream_throughput_outbound_megabits_per_sec | default(200) }}
 
 # Throttles all streaming file transfer between the datacenters,
 # this setting allows users to throttle inter dc stream throughput in addition
