@@ -46,7 +46,7 @@
 
 - name: Add Apache repository (Apache)
   apt_repository:
-    repo: "{{ repourl_apache | default('deb https://debian.cassandra.apache.org 30x main') }}"
+    repo: "{{ repourl_apache | default('deb https://debian.cassandra.apache.org 311x main') }}"
     state: present
   when: install_version == "apache"
 
