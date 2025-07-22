@@ -122,12 +122,15 @@
   register: cassandra_installed_apache
 
 - name: get cassandra_installed variable (DCE)
+  when: install_version == "dce" and run_updates|default(true)|bool == true
   set_fact: cassandra_installed="{{ cassandra_installed_dce.changed }}"
 
 - name: get cassandra_installed variable (DSE)
+  when: install_version == "dse" and run_updates|default(true)|bool == true
   set_fact: cassandra_installed="{{ cassandra_installed_dse.changed }}"
 
 - name: get cassandra_installed variable (Apache)
+  when: install_version == "apache" and run_updates|default(true)|bool == true
   set_fact: cassandra_installed="{{ cassandra_installed_apache.changed }}"
 
 - name: Wait for server autostart
