@@ -225,6 +225,11 @@
 - import_tasks: dse_config.yml
   when: install_version == "dse"
 
+- name: Prepare for graceful restart
+  when: not (init_server | default(false))
+  shell: "nodetool {{ current_nodetool_auth | default() }} drain"
+  ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
+
 - name: Cassandra DCE startup
   when: install_version == "dce"
   service: name=cassandra state=restarted
