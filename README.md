@@ -30,6 +30,7 @@ Inventory configuration:
  cassandra_nodes     | monitoring_jmx_remote_password | password                                                 | -              | JMX password for monitoring (readonly)                                                                          
  cassandra_nodes     | unauthorized_jmx               | yes, no                                                  | no             | allow unauthorized access, careful with this one! local_jmx=no and unauthorized_jmx=no will require password for local connections as well
  cassandra_nodes     | run_updates                    | yes, no                                                  | yes            | allow skipping apt updates 
+ cassandra_nodes     | java_version                   | 8, 11                                                                   | 8              | OpenJDK version to install 
 ---                 | ---                            | ---                                                      | ---            
  opscenter_nodes     | node_ip                        | true, false                                              | -              | IP for internal cluster communications                                                                          
  ---                 | ---                            | ---                                                      | ---            

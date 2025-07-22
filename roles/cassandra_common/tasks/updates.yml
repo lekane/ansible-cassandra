@@ -64,5 +64,14 @@
 - name: Install python-setuptools package
   apt: pkg=python-setuptools state=present
 
-- name: Install OpenJDK Java
+- name: Install OpenJDK Java 8
   apt: name=openjdk-8-jdk state=latest
+  when: java_version is not defined or java_version == 8
+
+- name: Uninstall OpenJDK Java 8
+  apt: name=openjdk-8-jdk state=absent
+  when: java_version is defined and java_version != 8
+
+- name: Install OpenJDK Java 11
+  apt: name=openjdk-11-jdk state=latest
+  when: java_version == 11
