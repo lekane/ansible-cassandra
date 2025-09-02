@@ -191,7 +191,10 @@
     removes: "{{ cassandra_config_dir }}/cassandra-topology.properties"
 
 - name: Backup original jvm.options
-  command: "cp {{ cassandra_config_dir }}/jvm.options {{ cassandra_config_dir }}/jvm.options.orig.{{ cassandra_version }} creates={{ cassandra_config_dir }}/jvm.options.orig.{{ cassandra_version }}"
+  command:
+    cmd: "cp {{ cassandra_config_dir }}/jvm.options {{ cassandra_config_dir }}/jvm.options.orig.{{ cassandra_version }}"
+    creates: "{{ cassandra_config_dir }}/jvm.options.orig.{{ cassandra_version }}"
+    removes: "{{ cassandra_config_dir }}/jvm.options"
 
 - name: Template cassandra.yml
   template: "src=cassandra.yaml.j2 dest={{ cassandra_config_dir }}/cassandra.yaml mode=0664"
