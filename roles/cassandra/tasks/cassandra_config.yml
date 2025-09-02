@@ -185,7 +185,10 @@
   command: "cp {{ cassandra_config_dir }}/cassandra-rackdc.properties {{ cassandra_config_dir }}/cassandra-rackdc.properties.orig.{{ cassandra_version }} creates={{ cassandra_config_dir }}/cassandra-rackdc.properties.orig.{{ cassandra_version }}"
 
 - name: Backup original cassandra-topology.properties
-  command: "cp {{ cassandra_config_dir }}/cassandra-topology.properties {{ cassandra_config_dir }}/cassandra-topology.properties.orig.{{ cassandra_version }} creates={{ cassandra_config_dir }}/cassandra-topology.properties.orig.{{ cassandra_version }}"
+  command:
+    cmd: "mv {{ cassandra_config_dir }}/cassandra-topology.properties {{ cassandra_config_dir }}/cassandra-topology.properties.orig.{{ cassandra_version }}"
+    creates: "{{ cassandra_config_dir }}/cassandra-topology.properties.orig.{{ cassandra_version }}"
+    removes: "{{ cassandra_config_dir }}/cassandra-topology.properties"
 
 - name: Backup original jvm.options
   command: "cp {{ cassandra_config_dir }}/jvm.options {{ cassandra_config_dir }}/jvm.options.orig.{{ cassandra_version }} creates={{ cassandra_config_dir }}/jvm.options.orig.{{ cassandra_version }}"
