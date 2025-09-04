@@ -50,10 +50,6 @@
     state: present
   when: install_version == "apache"
 
-- name: Add OpenJDK Java PPA repo
-  apt_repository:
-    repo: "{{ repourl_openjdk_java | default('ppa:openjdk-r/ppa') }}"
-
 - name: Update APT cache
   apt: update_cache=true
 
