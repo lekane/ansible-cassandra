@@ -54,12 +54,6 @@ s3_backup_access_key=<access_key>
 s3_backup_secret_key=<secret_key>
 ignore_shutdown_errors=false
 
-[opscenter_nodes]
-<OPSCENTER_NODE> node_ip=<OPSCENTER_NODE_IP>
-
-[opscenter_nodes:vars]
-spark_enabled=false
-
 [spark_master_nodes]
 <SPARK_MASTER_NODE> node_ip=<SPARK_MASTER_NODE_IP_FOR_CASSANDRA> spark_node_ip=<NODE_IP_FOR_SPARK> spark_master_ip=<SPARK_MASTER_NODE_IP_FOR_SPARK>
 
@@ -74,7 +68,6 @@ spark_datacenter=DC2
 
 [all_cassandra_nodes:children]
 cassandra_nodes
-opscenter_nodes
 spark_master_nodes
 
 [all_cassandra_nodes:vars]
@@ -83,7 +76,3 @@ ansible_ssh_user=ubuntu
 install_user=ubuntu
 deployment_environment=aws
 data_disk_environment=ephemeral_raid
-install_version=dce
-opscenter_enabled=true
-dse_username=<DSE user>
-dse_password=<DSE password>

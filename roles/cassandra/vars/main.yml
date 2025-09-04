@@ -1,7 +1,5 @@
-dsc_version: 3.0.9-1
+install_version: apache
 cassandra_version: 4.1.10
 cassandra_tools_version: 3.0.9
-
-dse_version: 4.7.0-1
 
 tablesnap_version: debian/0.7.1-3

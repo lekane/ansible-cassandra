@@ -34,14 +34,6 @@
     reboot_timeout: 3600
   when: init_server | default(false) and data_disk_environment == 'ephemeral_raid'
 
-- name: Set cassandra_config_dir fact (DCE)
-  when: install_version == "dce"
-  set_fact: cassandra_config_dir=/etc/cassandra
-
-- name: Set cassandra_config_dir fact (DSE)
-  when: install_version == "dse"
-  set_fact: cassandra_config_dir=/etc/dse/cassandra
-
 - name: Set cassandra_config_dir fact (Apache)
   when: install_version == "apache"
   set_fact: cassandra_config_dir=/etc/cassandra
@@ -74,16 +66,6 @@
   set_fact: current_nodetool_auth="-u admin -pw {{ admin_jmx_remote_password }}"
   when: jmx_state.stdout == "no"
 
-- name: Stop Cassandra DCE
-  when: init_server | default(false) and install_version == 'dce' and cassandra_config_dir_state.stat.exists == true
-  shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
-  ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
-
-- name: Stop Cassandra DSE
-  when: init_server | default(false) and install_version == 'dse' and cassandra_config_dir_state.stat.exists == true
-  shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service dse stop"
-  ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
-
 - name: Stop Cassandra Apache
   when: init_server | default(false) and install_version == 'apache' and cassandra_config_dir_state.stat.exists == true
   shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
@@ -97,37 +79,12 @@
   when: system_log_file.stat.exists == True
   shell: echo > /var/log/cassandra/system.log
 
-- name: Install Datastax Community Cassandra & tools
-  when: install_version == "dce" and run_updates|default(true)|bool == true
-  apt:
-    name:
-      - dsc30={{ dsc_version }}
-      - cassandra={{ cassandra_version }}
-      - cassandra-tools={{ cassandra_tools_version }}
-    state: present
-  register: cassandra_installed_dce
-
-- name: Install Datastax Enterprise Cassandra
-  when: install_version == "dse" and run_updates|default(true)|bool == true
-  register: cassandra_installed_dse
-  apt:
-    name: dse-full={{ dse_version }}
-    state: present
-
 - name: Install Apache Cassandra
   when: install_version == "apache" and run_updates|default(true)|bool == true
   apt:
     name: cassandra={{ cassandra_version }}
     state: present
   register: cassandra_installed_apache
-
-- name: get cassandra_installed variable (DCE)
-  when: install_version == "dce" and run_updates|default(true)|bool == true
-  set_fact: cassandra_installed="{{ cassandra_installed_dce.changed }}"
-
-- name: get cassandra_installed variable (DSE)
-  when: install_version == "dse" and run_updates|default(true)|bool == true
-  set_fact: cassandra_installed="{{ cassandra_installed_dse.changed }}"
 
 - name: get cassandra_installed variable (Apache)
   when: install_version == "apache" and run_updates|default(true)|bool == true
@@ -136,14 +93,6 @@
 - name: Wait for server autostart
   when: init_server | default(false) and cassandra_installed == true
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients"
-
-- name: Stop Cassandra DCE (autostarted on install)
-  when: init_server | default(false) and install_version == 'dce'
-  service: name=cassandra state=stopped
-
-- name: Stop Cassandra DSE (autostarted on install)
-  when: init_server | default(false) and install_version == 'dse'
-  service: name=dse state=stopped
 
 - name: Stop Cassandra Apache (autostarted on install)
   when: init_server | default(false) and install_version == 'apache'
@@ -242,21 +191,10 @@
   when: empty_cluster | default(false)
   command: "sed -i -e '/#auto_boostrap/s/#auto_boostrap/auto_boostrap/' {{ cassandra_config_dir }}/cassandra.yaml"
 
-- import_tasks: dse_config.yml
-  when: install_version == "dse"
-
 - name: Prepare for graceful restart
   when: not (init_server | default(false))
   shell: "nodetool {{ current_nodetool_auth | default() }} drain"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
-
-- name: Cassandra DCE startup
-  when: install_version == "dce"
-  service: name=cassandra state=restarted
-
-- name: Cassandra DSE startup
-  when: install_version == "dse"
-  service: name=dse state=restarted
 
 - name: Cassandra Apache startup
   when: install_version == "apache"

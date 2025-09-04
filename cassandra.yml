@@ -27,8 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Create/configure Cassandra cluster & OpsCenter
-# ==============================================
+# Create/configure Cassandra cluster
+# ==================================
 #
 # To create nodes for new empty cluster: 
 # ansible-playbook -i <inventory> --extra-vars="init_server=true empty_cluster=true" cassandra.yml 
@@ -65,14 +65,6 @@
   environment: "{{ proxy_env }}"
   roles:
   - { role: cassandra, tags: ['cassandra'] }
-
-- name: OpcCenter installation
-  hosts: all_cassandra_nodes
-  user: install_user
-  become: true
-  environment: "{{ proxy_env }}"
-  roles:
-  - { role: opscenter, tags: ['opscenter'], when: install_version == "dse" and (opscenter_enabled | default(false)) == "true"  }
 
 - name: Spark install
   hosts: 

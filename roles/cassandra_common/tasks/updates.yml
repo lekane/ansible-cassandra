@@ -16,26 +16,6 @@
     name: ndg-httpsclient
   when: ansible_distribution_release == 'trusty'
 
-- name: Add Datastax repository (DCE)
-  apt_repository:
-    repo: "{{ repourl_datastax_ce | default('deb http://debian.datastax.com/community stable main') }}"
-    state: present
-  when: install_version == "dce"
-
-- name: Add Datastax repository (DSE)
-  apt_repository:
-    repo: "{{ repourl_datastax_se | default('deb http://{{ dse_username }}:{{ dse_password }}@debian.datastax.com/enterprise stable main') }}"
-    state: present
-  when:
-    - install_version == "dse"
-    - dse_username is defined and dse_password is defined
-
-- name: Add Datastax repository key
-  apt_key:
-    url: "{{ repokey_datastax | default('http://debian.datastax.com/debian/repo_key') }}"
-    state: present
-  when: install_version == "dce" or install_version == "dse"
-
 #https://www.apache.org/dist/cassandra/KEYS
 #sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv-key 32F35CB2F546D93E
 - name: Add Apache repository key

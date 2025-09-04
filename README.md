@@ -1,12 +1,13 @@
 # ansible-cassandra
 
-Ansible provisioning/maintenance tasks for Cassandra. Can be used to install & manage upgrades for an Apache Cassandra or Datastax (DCE or DSE+Opscenter) based Cassandra cluster & Spark
+Ansible provisioning/maintenance tasks for Cassandra. Can be used to install & manage upgrades for an Apache Cassandra
+based cluster & Spark
 
 Usage:
 
-1. Create the servers for Cassandra and other services (e.g Datastax OpsCenter, Spark master)
+1. Create the servers for Cassandra and Spark
 2. Define an Ansible inventory (see inventory/example.hosts) for your environment
-3. Run the playbook to install Cassandra + other services
+3. Run the playbook to install Cassandra + Spark
 
 Inventory configuration:
 
@@ -31,16 +32,11 @@ Inventory configuration:
  cassandra_nodes     | unauthorized_jmx               | yes, no                                                  | no             | allow unauthorized access, careful with this one! local_jmx=no and unauthorized_jmx=no will require password for local connections as well
  cassandra_nodes     | run_updates                    | yes, no                                                  | yes            | allow skipping apt updates 
  cassandra_nodes     | java_version                   | 8, 11                                                                   | 8              | OpenJDK version to install 
----                 | ---                            | ---                                                      | ---            
- opscenter_nodes     | node_ip                        | true, false                                              | -              | IP for internal cluster communications                                                                          
  ---                 | ---                            | ---                                                      | ---            
  all_cassandra_nodes | data_disk_environment          | ephemeral_raid, directory_symlink, create_data_directory,ephemeral_nvme | ephemeral_raid | data disk options                                                                                               
  all_cassandra_nodes | data_disk_symlink              | symlink name                                             | -              | name of symlink when using "directory_symlink" data_disk_environment                                            
  all_cassandra_nodes | deployment_environment         | aws, euca                                                | -              | environment for installation                                                                                    
- all_cassandra_nodes | install_version                | apache, dce, dse                                         | -              | Cassandra to install (apache=Apache Cassandra, dce=Datastax Community Edition, dse=Datastax Enterprise Edition) 
  all_cassandra_nodes | ignore_shutdown_errors         | true, false                                              | false          | Should we ignore errors with graceful node shutdown                                                             
- all_cassandra_nodes | dse_username                   | DSE username                                             | -              | DSE username (only for DSE install)                                                                             
- all_cassandra_nodes | dse_password                   | DSE password                                             | -              | DSE password (only for DSE install)                                                                             
  all_spark_nodes     | common_ssh_key                 | public ssh key                                           | -              | add a common pre-existing ssh key for easier node management                                                    
  all_spark_nodes     | nfs_mount                      | true, false                                              | false          | is there an NFS mount to add to the spark instances                                                             
  all_spark_nodes     | nfs_mount_target               | nfs mount target address:/dir                            | -              | nfs mount target, ie: 192.168.1.66:/shared_data                                                                 
@@ -67,10 +63,3 @@ The supported environments are:
 Spark setup:
 Typical way of setting up the environment would be to define 2 Cassandra data centers: one for real-time transactions (plain Cassandra) and
 another for analytics workloads (Cassandra with co-located Spark nodes). You can also use the playbook without installing Spark.
-
-Notes:
-
-- DCE to Apache Cassandra migration: As Datastax dropped support for DCE (3.0.9 is the last supported version), it is recommended you migrate to
-  Apache Cassandra based setup (or run DSE). The migration path we took in our clusters was an round-robin DCE->Apache migration (graceful shutdown of node, removal of DCE, running the playbook with default setup on the node (installs &
-  configures Apache Cassandra and keeps the old node data)). You'll probably want to set
-  ignore_shutdown_errors=true so that the playbook will run when the old binaries have been remove & service isn't running.

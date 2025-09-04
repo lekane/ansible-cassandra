@@ -14,10 +14,6 @@ galaxy_info:
 
   galaxy_tags:
     - cassandra
-    - datastax-enterprise
-    - datastax-community
-    - dse
-    - dce
     - apache cassandra
 
 dependencies: []
