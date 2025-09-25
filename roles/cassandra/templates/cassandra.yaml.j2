@@ -1023,6 +1023,10 @@ column_index_cache_size: 2KiB
 # If your data directories are backed by SSD, you should increase this
 # to the number of cores.
 # concurrent_compactors: 1
+{% if concurrent_compactors is defined %}
+concurrent_compactors: {{ concurrent_compactors }}
+{% endif %}
+
 
 # Number of simultaneous repair validations to allow. If not set or set to
 # a value less than 1, it defaults to the value of concurrent_compactors.
