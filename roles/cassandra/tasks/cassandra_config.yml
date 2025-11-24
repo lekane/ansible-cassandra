@@ -34,8 +34,7 @@
     reboot_timeout: 3600
   when: init_server | default(false) and data_disk_environment == 'ephemeral_raid'
 
-- name: Set cassandra_config_dir fact (Apache)
-  when: install_version == "apache"
+- name: Set cassandra_config_dir fact
   set_fact: cassandra_config_dir=/etc/cassandra
 
 - name: Check for cassandra_config_dir existence
@@ -66,8 +65,8 @@
   set_fact: current_nodetool_auth="-u admin -pw {{ admin_jmx_remote_password }}"
   when: jmx_state.stdout == "no"
 
-- name: Stop Cassandra Apache
-  when: init_server | default(false) and install_version == 'apache' and cassandra_config_dir_state.stat.exists == true
+- name: Stop Cassandra
+  when: init_server | default(false) and cassandra_config_dir_state.stat.exists == true
   shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
@@ -79,23 +78,23 @@
   when: system_log_file.stat.exists == True
   shell: echo > /var/log/cassandra/system.log
 
-- name: Install Apache Cassandra
-  when: install_version == "apache" and run_updates|default(true)|bool == true
+- name: Install Cassandra
+  when: run_updates|default(true)|bool == true
   apt:
     name: cassandra={{ cassandra_version }}
     state: present
   register: cassandra_installed_apache
 
-- name: get cassandra_installed variable (Apache)
-  when: install_version == "apache" and run_updates|default(true)|bool == true
+- name: get cassandra_installed variable
+  when: run_updates|default(true)|bool == true
   set_fact: cassandra_installed="{{ cassandra_installed_apache.changed }}"
 
 - name: Wait for server autostart
   when: init_server | default(false) and cassandra_installed == true
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients"
 
-- name: Stop Cassandra Apache (autostarted on install)
-  when: init_server | default(false) and install_version == 'apache'
+- name: Stop Cassandra (autostarted on install)
+  when: init_server | default(false)
   service: name=cassandra state=stopped
 
 - name: Clear Cassandra logs (after autostart)
@@ -197,7 +196,6 @@
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Cassandra restart
-  when: install_version == "apache"
   service: name=cassandra state=restarted
 
 - name: Wait for Cassandra startup (bootstrapping)
