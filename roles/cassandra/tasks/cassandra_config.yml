@@ -196,7 +196,7 @@
   shell: "nodetool {{ current_nodetool_auth | default() }} drain"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
-- name: Cassandra Apache startup
+- name: Cassandra restart
   when: install_version == "apache"
   service: name=cassandra state=restarted
 
