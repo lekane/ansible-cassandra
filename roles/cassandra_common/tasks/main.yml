@@ -60,6 +60,7 @@
 - name: Load seed list
   shell: cat /tmp/seed_list
   register: seed_list
+  check_mode: no
 
 - name: Set seeds fact
   set_fact: seeds={{ seed_list.stdout }}
