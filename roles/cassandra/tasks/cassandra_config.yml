@@ -162,12 +162,8 @@
     regexp: "^-Xloggc:"
     line: "-Xloggc:/var/log/cassandra/gc.log"
 
-- name: Enable gc logfile in jvm11-server.options
-  lineinfile:
-    path: "{{ cassandra_config_dir }}/jvm11-server.options"
-    insertafter: "^#-Xlog"
-    regexp: "^-Xlog:"
-    line: "-Xlog:gc=info,heap*=trace,age*=debug,safepoint=info,promotion*=trace:file=/var/log/cassandra/gc.log:time,uptime,pid,tid,level:filecount=10,filesize=10485760"
+- name: Template jvm11-server.options
+  template: src=jvm11-server.options.j2 dest="{{ cassandra_config_dir }}/jvm11-server.options"
 
 - name: Template jmxremote.password
   template: "src=jmxremote.password.j2 dest={{ cassandra_config_dir }}/jmxremote.password mode=0400 owner=cassandra group=cassandra"
