@@ -35,6 +35,7 @@ Inventory configuration:
  cassandra_nodes     | java_gc                        | cms, g1                                                                 | cms            | Garbage collector to use (g1 supported for java_version=11) 
  cassandra_nodes     | concurrent_compactors          | integer number                                                          | 1              | amount of thread to use for compaction
  cassandra_nodes      | heaplimit                      | 4G, 500M...                                                             | commented out  | set the Xmx & Xms manually, or by default it uses the cassandra defaults which is calculated by system memory
+ cassandra_nodes     | tombstone_warn_threshold       | integer number                                                          | 1000           | Cassandra issues a warning if a query scans more than this number of tombstones.
 ---                 | ---                            | ---                                                                     | ---            
  all_cassandra_nodes | data_disk_environment          | ephemeral_raid, directory_symlink, create_data_directory,ephemeral_nvme | ephemeral_raid | data disk options                                                                                               
  all_cassandra_nodes | data_disk_symlink              | symlink name                                                            | -              | name of symlink when using "directory_symlink" data_disk_environment                                            
