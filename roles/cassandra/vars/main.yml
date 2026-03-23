@@ -1,4 +1,4 @@
-cassandra_version: 4.1.10
+cassandra_version: 4.1.11
 cassandra_tools_version: 3.0.9
 
 tablesnap_version: debian/0.7.1-3
