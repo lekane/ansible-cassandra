@@ -1536,7 +1536,7 @@ transparent_data_encryption_options:
 # scan more tombstones anyway.  These thresholds may also be adjusted at runtime
 # using the StorageService mbean.
 tombstone_warn_threshold: {{ tombstone_warn_threshold | default(1000) }}
-tombstone_failure_threshold: 100000
+tombstone_failure_threshold: {{ tombstone_failure_threshold | default(100000) }}
 
 # Filtering and secondary index queries at read consistency levels above ONE/LOCAL_ONE use a
 # mechanism called replica filtering protection to ensure that results from stale replicas do
