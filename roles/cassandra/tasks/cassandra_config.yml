@@ -86,15 +86,15 @@
   register: cassandra_installed
 
 - name: Wait for server autostart
-  when: init_server | default(false) and cassandra_installed is changed
+  when: init_server | default(false) | bool and cassandra_installed is changed
   wait_for: path=/var/log/cassandra/system.log search_regex="Starting listening for CQL clients"
 
 - name: Stop Cassandra (autostarted on install)
-  when: init_server | default(false)
+  when: init_server | default(false) | bool
   service: name=cassandra state=stopped
 
 - name: Clear Cassandra logs (after autostart)
-  when: init_server | default(false)
+  when: init_server | default(false) | bool
   shell: echo > /var/log/cassandra/system.log
 
 - name: Cassandra system.log ownership check
@@ -102,7 +102,7 @@
 
 - name: Remove cluster metadata
   shell: rm -rf /var/lib/cassandra/*
-  when: init_server | default(false)
+  when: init_server | default(false) | bool
 
 - name: Create data directory
   file: path=/data/cassandra/data state=directory owner=cassandra group=cassandra mode=0755
