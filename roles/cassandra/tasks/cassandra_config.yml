@@ -67,7 +67,7 @@
 
 - name: Stop Cassandra
   when: init_server | default(false) and cassandra_config_dir_state.stat.exists == true
-  shell: "nodetool {{ current_nodetool_auth | default() }} disablethrift && nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
+  shell: "nodetool {{ current_nodetool_auth | default() }} disablebinary && nodetool {{ current_nodetool_auth | default() }} disablegossip && nodetool {{ current_nodetool_auth | default() }} drain && service cassandra stop"
   ignore_errors: "{{ ignore_shutdown_errors | default(false) }}"
 
 - name: Check Cassandra system.log existence
