@@ -149,8 +149,8 @@
 - name: Template cassandra-rackdc.properties
   template: "src=cassandra-rackdc.properties.j2 dest={{ cassandra_config_dir }}/cassandra-rackdc.properties mode=0664"
 
-- name: Template cassandra-topology.properties
-  template: "src=cassandra-topology.properties.j2 dest={{ cassandra_config_dir }}/cassandra-topology.properties mode=0664"
+- name: Remove existing cassandra-topology.properties (not needed for GossipingPropertyFileSnitch)
+  file: path={{ cassandra_config_dir }}/cassandra-topology.properties state=absent
 
 - name: Template jvm-server.options
   template: "src=jvm-server.options.j2 dest={{ cassandra_config_dir }}/jvm-server.options mode=0664"
