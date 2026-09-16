@@ -1,0 +1,29 @@
+
+- name: Install python3-venv
+  apt:
+    name: python3-venv
+    state: present
+
+- name: Create virtualenv
+  command: python3 -m venv /opt/cqlsh-venv
+  args:
+    creates: /opt/cqlsh-venv/bin/python
+
+- name: Upgrade pip
+  pip:
+    name: pip
+    state: latest
+    virtualenv_command: python3
+    virtualenv: /opt/cqlsh-venv
+
+- name: Install cqlsh
+  pip:
+    name: cqlsh
+    virtualenv: /opt/cqlsh-venv
+
+- name: Create cqlsh symlink
+  file:
+    src: /opt/cqlsh-venv/bin/cqlsh
+    dest: /usr/local/bin/cqlsh
+    state: link
+    force: yes

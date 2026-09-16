@@ -51,3 +51,11 @@
 - name: Install OpenJDK Java 11
   apt: name=openjdk-11-jdk state=latest
   when: java_version == 11
+
+# ubuntu 24 default python doesn't play well with cqlsh
+- name: install cqlsh in python venv
+  include_tasks: venv_cqlsh.yml
+  when:
+    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_major_version | int >= 24
+
