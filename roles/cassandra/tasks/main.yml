@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - import_tasks: cassandra_config.yml
-  when: restart_cassandra | default(true)
+  when: restart_cassandra | default(true) | bool
 
 #- include: s3_backup.yml
 #  when: s3_backup_enabled | default(false)
