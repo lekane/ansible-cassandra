@@ -45,8 +45,7 @@
   script: "raid_ephemeral.sh {{ deployment_environment }}"
   when: init_server | default(false) and data_disk_environment == 'ephemeral_raid'
 
-- name: Create /data directory from ephemeral nvme disk
-  script: "nvme_ephemeral.sh {{ deployment_environment }}"
+- import_tasks: mount_ebs.yml
   when: init_server | default(false) and data_disk_environment == 'ephemeral_nvme'
 
 - name: Symlink 'data_disk_symlink' to /data for data

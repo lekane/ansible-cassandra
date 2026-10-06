@@ -1,0 +1,68 @@
+---
+- name: Get block devices as JSON
+  ansible.builtin.command: lsblk -J
+  register: lsblk_result
+  changed_when: false
+
+- name: Parse lsblk output
+  ansible.builtin.set_fact:
+    block_devices: "{{ (lsblk_result.stdout | from_json).blockdevices }}"
+
+- name: Find nvme disks that are completely unused (no mountpoint, no partitions)
+  ansible.builtin.set_fact:
+    nvme_free_disks: >-
+      {{ block_devices
+         | selectattr('name', 'match', '^nvme')
+         | selectattr('mountpoints', 'equalto', [none])
+         | rejectattr('children', 'defined')
+         | map(attribute='name')
+         | list }}
+
+# Checks the mountpoints of every device and of their partitions.
+- name: Check whether something is already mounted at /data
+  ansible.builtin.set_fact:
+    data_mounted: >-
+      {{ '/data' in (block_devices
+                    + (block_devices
+                       | selectattr('children', 'defined')
+                       | map(attribute='children')
+                       | flatten))
+                   | map(attribute='mountpoints')
+                   | flatten }}
+
+- name: Check at most one unmounted nvme exists
+  ansible.builtin.fail:
+    msg: >-
+      Found {{ nvme_free_disks | length }} unused nvme disks:
+      ({{ nvme_free_disks | join(', ') }}), expected at most one
+  when: nvme_free_disks | length >= 2
+
+- name: Format and mount the unused nvme disk to /data
+  when:
+    - not data_mounted
+    - nvme_free_disks | length == 1
+  block:
+    - name: Set the device path of the unused nvme disk
+      ansible.builtin.set_fact:
+        nvme_device: "/dev/{{ nvme_free_disks | first }}"
+
+    - name: Make nvme filesystem
+      filesystem:
+        fstype: "ext4"
+        dev: "{{ nvme_device }}"
+        state: "present"
+
+    - name: Get the UUID of the new filesystem
+      ansible.builtin.command: blkid -c /dev/null -s UUID -o value {{ nvme_device }}
+      register: nvme_uuid
+      changed_when: false
+
+    - name: Mount nvme EBS
+      mount:
+        src: "UUID={{ nvme_uuid.stdout }}"
+        name: "/data"
+        fstype: "ext4"
+        opts: "defaults,nofail"
+        dump: "0"
+        passno: "2"
+        state: mounted
